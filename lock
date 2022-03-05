@@ -1,5 +1,3 @@
 #!/usr/bin/env bash
 
-pipenv lock
-pipenv sync --dev
-pipenv run pip freeze > requirements_lock.txt
+pipenv lock -r > requirements-lock.txt

@@ -1,5 +1,3 @@
-# TODO: Add targets for type stub files
-
 VALID_EXTENSIONS = ["py", "pyi"]
 
 
