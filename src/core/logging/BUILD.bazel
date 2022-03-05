@@ -4,7 +4,6 @@ load("//tools/library:defs.bzl", "python_library")
 
 python_library(
     name="logging",
-    srcs=glob(["**/*.py"]),
     deps=[
         requirement("loguru"),
     ],

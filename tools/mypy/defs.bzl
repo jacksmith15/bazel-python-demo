@@ -67,7 +67,9 @@ def _extract_transitive_depsets(ctx):
         ctx.attr._mypy_cli.default_runfiles.files,  # Include the mypy executable
         ctx.attr._sitepkg_loader.default_runfiles.files,  # And the site-packages loader
         ctx.attr.mypy_ini.files,  # And the mypy configuration file
+        depset(direct=_extract_direct_srcs(ctx.attr.data)),  # Any data files (e.g. .pyi files)
     ]
+    # Transitive files from any dependencies:
     for dep in ctx.attr.deps:
         transitive_deps.extend([dep.default_runfiles.files, dep.data_runfiles.files])
     return transitive_deps
@@ -103,6 +105,7 @@ mypy_test = rule(
     implementation=_mypy_test_impl,
     attrs={
         "srcs": attr.label_list(allow_files=[".py"]),
+        "data": attr.label_list(allow_files=True),
         "deps": attr.label_list(),
         "imports": attr.string_list(),
         "opts": attr.string_list(),

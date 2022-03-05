@@ -2,41 +2,116 @@ load("//tools/pytest:defs.bzl", "pytest_test")
 load("//tools/mypy:defs.bzl", "mypy_test")
 
 
-def python_library(name, srcs=[], test_deps=[], imports=[], **kwargs):
+def python_library(
+    name,
+    srcs=None,
+    data=None,
+    deps=[],
+    test_data=[],
+    test_deps=[],
+    imports=[],
+    **kwargs
+):
     """A macro for declaring a python library, complete with tests and typechecking.
 
     Tests are considered anything under tests/ folder, or ending `_test.py`.
+
+    Usage:
+
+    ```
+    python_library(
+        name="my_library",
+        srcs=glob(["**/*.py", "**/*.pyi"]), # Omit this argument for sensible default behaviour
+        data=[  # If not provided, collect sensible defaults if present e.g. `py.typed`
+            "py.typed",
+            "words.txt",
+        ],
+        deps=[
+            "//other/lib",
+            requirement("requests"),
+        ],
+        test_data=glob("tests/**/fixtures/*.txt"),
+        test_deps=[
+            requirement("pytest"),
+            requirement("types-requests"),
+        ],
+        imports=[".."],  # Add the parent directory to PYTHONPATH
+    )
+    ```
     """
-    test_srcs = [src for src in srcs if src.startswith("tests/") or src.endswith("_test.py")]
-    srcs = [src for src in srcs if src not in test_srcs]
+    if srcs == None:
+        srcs = native.glob(["**/*.py", "**/*.pyi"])
+    if data == None:
+        data = native.glob(["py.typed"])
+
+    sources = _extract_sources(srcs)
 
     native.py_library(
         name=name,
-        srcs=srcs,
+        srcs=sources.sources,
+        data=data + sources.stubs,
+        deps=deps,
         imports=imports,
         **kwargs
     )
 
     # We can replace deps to point at library above (existing ones become transitive):
-    kwargs["deps"] = [":{}".format(name)] + test_deps
+    test_deps.append(":{}".format(name))
 
+    # TODO: Allow settings mypy opts and overriding mypy.ini
     mypy_test(
         name="{}_typecheck_srcs".format(name),
-        srcs=srcs,
+        srcs=sources.sources,# + sources.stubs,
         imports=imports,
-        **kwargs,
+        deps=test_deps,
     )
 
     mypy_test(
         name="{}_typecheck_tests".format(name),
-        srcs=test_srcs,
+        srcs=sources.test_sources + sources.test_stubs,
         imports=imports,
-        **kwargs,
+        deps=test_deps,
+        data=sources.test_stubs,
     )
 
     pytest_test(
         name="{}_tests".format(name),
-        srcs=test_srcs,
+        srcs=sources.test_sources,
         imports=imports,
+        data=test_data,
+        deps=test_deps,
         **kwargs,
     )
+
+
+def _extract_sources(srcs):
+    sources = []
+    stubs = []
+    test_sources = []
+    test_stubs = []
+
+    for src in srcs:
+        if _is_test(src):
+            if _is_stub(src):
+                test_stubs.append(src)
+            else:
+                test_sources.append(src)
+        else:
+            if _is_stub(src):
+                stubs.append(src)
+            else:
+                sources.append(src)
+
+    return struct(sources=sources, stubs=stubs, test_sources=test_sources, test_stubs=test_stubs)
+
+
+def _is_stub(src):
+    return src.endswith(".pyi")
+
+
+def _is_test(src):
+    return src.startswith("tests/") or _remove_extension(src).endswith("_test")
+
+
+def _remove_extension(path):
+    return "".join(reversed("".join(reversed(path.elems())).split(".", 1)[-1].elems()))
