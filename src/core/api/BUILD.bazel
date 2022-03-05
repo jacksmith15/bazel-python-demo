@@ -10,6 +10,7 @@ python_library(
         "//src/core/logging:logging",
     ],
     test_deps=[
+        requirement("pytest"),
     ],
     imports=["../.."],
     visibility=["//visibility:public"],

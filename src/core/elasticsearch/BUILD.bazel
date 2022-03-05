@@ -9,6 +9,10 @@ python_library(
         requirement("elasticsearch"),
         requirement("pydantic"),
     ],
+    test_deps=[
+        requirement("pytest"),
+        requirement("types-requests"),
+    ],
     imports=["../.."],
     visibility=["//visibility:public"],
 )

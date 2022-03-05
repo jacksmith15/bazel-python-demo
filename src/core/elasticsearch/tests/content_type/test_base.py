@@ -1,8 +1,8 @@
 import pytest
 
 from core.elasticsearch.content_type.base import ContentType
-from tests.fixtures import FOO
-from content_type.index import Index
+from core.elasticsearch.tests.fixtures import FOO
+
 
 class TestContentType:
     @staticmethod

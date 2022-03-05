@@ -8,6 +8,10 @@ python_library(
     deps=[
         requirement("loguru"),
     ],
+    test_deps=[
+        requirement("pytest"),
+        requirement("loguru-mypy"),
+    ],
     imports=["../.."],  # Allow importing as `from core.logging import *`
     visibility=["//visibility:public"],
 )

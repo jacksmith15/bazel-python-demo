@@ -3,9 +3,11 @@ import os
 import sys
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any, TextIO
+from typing import TYPE_CHECKING, Any, TextIO
 
 import loguru
+if TYPE_CHECKING:
+    from loguru import Logger, Message, Record
 
 
 class LogLevel(Enum):
@@ -26,7 +28,7 @@ class LogLevel(Enum):
 def setup_logger(
     log_level: str = "INFO",
     sink: TextIO = sys.stdout,
-) -> "loguru.Logger":
+) -> "Logger":
     """Configure the logger."""
     LogLevel(log_level)  # Validate
 
@@ -42,9 +44,9 @@ def setup_logger(
 class JSONHandler:
     file_obj: TextIO
 
-    def write(self, message: "loguru.Message") -> None:
+    def write(self, message: "Message") -> None:
         """Write the structured log entry to the output stream."""
-        record: "loguru.Record" = message.record
+        record: "Record" = message.record
         struct = {
             "level": record["level"].name,
             "time": record["time"].isoformat(),

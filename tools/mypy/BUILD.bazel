@@ -1,6 +1,38 @@
+load("@python_deps//:requirements.bzl", "requirement")
+
 exports_files(
     [
         "mypy_wrapper.py",
         "mypy.ini",
     ]
+)
+
+py_binary(
+    name="mypy",
+    srcs=["mypy_wrapper.py"],
+    main="mypy_wrapper.py",
+    deps=[
+        requirement("mypy"),
+    ],
+    visibility=["//visibility:public"],
+    python_version="PY3",
+)
+
+
+py_binary(
+    name="sitepkg_loader",
+    srcs=["sitepkg_loader.py"],
+    main="sitepkg_loader.py",
+    deps=[
+        requirement("mypy"),
+    ],
+    visibility=["//visibility:public"],
+    python_version="PY3",
+)
+
+
+filegroup(
+    name="mypy_ini",
+    srcs=["mypy.ini"],
+    visibility=["//visibility:public"],
 )

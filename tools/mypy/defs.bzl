@@ -1,62 +1,122 @@
-"""Wrap mypy"""
+# TODO: Add targets for type stub files
 
-load("@rules_python//python:defs.bzl", "py_test")
-load("@python_deps//:requirements.bzl", "requirement")
-load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
+VALID_EXTENSIONS = ["py", "pyi"]
 
 
-def mypy_test(name, srcs, deps=[], args=[], data=[], imports=[], **kwargs):
-    mypy_ini = Label("//tools/mypy:mypy.ini")
-    py_test(
-        name=name,
-        srcs=[
-            "//tools/mypy:mypy_wrapper.py",
-        ]
-        + srcs,
-        main="//tools/mypy:mypy_wrapper.py",
-        args=[
-            # Default config file:
-            "--config-file={}/{}".format(mypy_ini.package, mypy_ini.name),
-            # The following two are required because of Bazel's path manipulation:
-            "--namespace-packages",
-            "--explicit-package-bases",
-        ]
-        + args
-        + ["$(location :%s)" % x for x in srcs],
-        python_version="PY3",
-        srcs_version="PY3",
-        deps=deps
-        + [
-            requirement("mypy"),
-        ],
-        data=[
-            mypy_ini,
-        ]
-        + data,
-        env={
-            "MYPYPATH": get_mypypath(srcs, deps, imports),
-        },
-        imports=imports,
-        **kwargs
+def _mypy_test_impl(ctx):
+    srcs = _extract_direct_srcs(ctx.attr.srcs)
+    mypypath = _extract_mypypath(ctx.attr.imports, ctx.label)
+
+    runfiles = _extract_runfiles(ctx)
+
+    mypy_options = [
+        # The following two flags are necessary for bazel implicit namespace package structure:
+        "--namespace-packages",
+        "--explicit-package-bases",
+        # Config file (can be overriden via the `mypy_ini` attr passed to the rule)
+        "--config-file={}/{}".format(ctx.attr.mypy_ini.label.package, ctx.attr.mypy_ini.label.name),
+        # Hack to ensure third party dependency type hints are used (including PEP-561) - see `sitepkg_loader.py`:
+        "--python-executable={}".format(_resolve_executable(ctx.executable._sitepkg_loader))
+    ] + ctx.attr.opts  # User options
+
+    exe = ctx.actions.declare_file("%s" % ctx.attr.name)
+
+    ctx.actions.write(
+        output=exe,
+        content="""#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+export MYPYPATH="{MYPYPATH}"
+
+{MYPY_EXE} {MYPY_OPTS} -- {MYPY_SRCS}
+""".format(
+            MYPYPATH=mypypath,
+            MYPY_EXE=_resolve_executable(ctx.executable._mypy_cli),
+            MYPY_OPTS=" ".join(mypy_options),
+            MYPY_SRCS=" ".join([f.short_path for f in srcs]),
+        ),
+        is_executable=True,
     )
+    return [DefaultInfo(executable=exe, runfiles=runfiles)]
 
 
-def get_mypypath(srcs, deps, imports):
-    """Get the MYPYPATH so that it matches the PYTHONPATH configured by `imports`.
+def _extract_runfiles(ctx):
+    """Extract all necessary runfiles for the rule."""
+    direct_srcs = _extract_direct_srcs(ctx.attr.srcs)
+    transitive_depsets = _extract_transitive_depsets(ctx)
+    depset_ = depset(direct=direct_srcs, transitive=transitive_depsets)
+    return ctx.runfiles(files=[file for file in depset_.to_list()])
 
-    We don't have access to the 'current directory', so we need to use a relative path from
-    one of the src files (we can use the `location` make variable ensure it expands later).
+
+def _extract_direct_srcs(srcs):
+    """Extract srcs which have a valid extension."""
+    direct_src_files = []
+    for src in srcs:
+        for f in src.files.to_list():
+            if f.extension in VALID_EXTENSIONS:
+                direct_src_files.append(f)
+    return direct_src_files
+
+
+def _extract_transitive_depsets(ctx):
+    """Get depsets for dependencies."""
+    transitive_deps = [
+        ctx.attr._mypy_cli.default_runfiles.files,  # Include the mypy executable
+        ctx.attr._sitepkg_loader.default_runfiles.files,  # And the site-packages loader
+        ctx.attr.mypy_ini.files,  # And the mypy configuration file
+    ]
+    for dep in ctx.attr.deps:
+        transitive_deps.extend([dep.default_runfiles.files, dep.data_runfiles.files])
+    return transitive_deps
+
+
+def _extract_mypypath(imports, label):
+    """The MYPYPATH should reflect the `imports` attr passed to the rule.
+
+    This is similar to the behaviour for PYTHONPATH in `py_library` rules.
     """
     if not imports:
         return "."
-    path = get_path_from_srcs(srcs)
-    result = []
+    parts = []
     for import_ in imports:
-        result.append("/".join([path, import_]))
-    return ":".join(result)
+        if import_.startswith("/"):
+            print("Ignoring invalid absolute path '{}'".format(import_))
+        elif import_ in ["", "."]:
+            parts.append(label.package)
+        else:
+            parts.append("{}/{}".format(label.package, import_))
+    return ":".join(parts)
 
 
-def get_path_from_srcs(srcs):
-    src = srcs[0]
-    depth = len(src.split("/"))
-    return "$(location :{})".format(src) + ("/.." * depth)
+def _resolve_executable(executable):
+    """Resolve an executable's location relative to the root."""
+    root = executable.root.path.rstrip("/") + "/"
+    if executable.path.startswith(root):
+        return executable.path[len(root):]
+    return executable.path
+
+
+mypy_test = rule(
+    implementation=_mypy_test_impl,
+    attrs={
+        "srcs": attr.label_list(allow_files=[".py"]),
+        "deps": attr.label_list(),
+        "imports": attr.string_list(),
+        "opts": attr.string_list(),
+        "mypy_ini": attr.label(default=Label("//tools/mypy:mypy.ini"), allow_single_file=True),
+        "_mypy_cli": attr.label(
+            default=Label("//tools/mypy:mypy"),
+            executable=True,
+            cfg="host",
+        ),
+        "_sitepkg_loader": attr.label(
+            default=Label("//tools/mypy:sitepkg_loader"),
+            executable=True,
+            cfg="host",
+        )
+    },
+    test=True,
+)

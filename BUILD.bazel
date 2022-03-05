@@ -1,5 +1,7 @@
 load("@rules_python//python:defs.bzl", "py_runtime_pair")
 
+# TODO: Avoid absolute path to system python.
+# See https://github.com/bazelbuild/rules_python/pull/618/files
 py_runtime(
     name="python_runtime_3_10_2",
     interpreter_path="/home/jack/.pyenv/versions/3.10.2/bin/python",
