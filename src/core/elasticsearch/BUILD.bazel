@@ -1,0 +1,14 @@
+load("@python_deps//:requirements.bzl", "requirement")
+load("//tools/library:defs.bzl", "python_library")
+
+
+python_library(
+    name="elasticsearch",
+    srcs=glob(["**/*.py"]),
+    deps=[
+        requirement("elasticsearch"),
+        requirement("pydantic"),
+    ],
+    imports=["../.."],
+    visibility=["//visibility:public"],
+)

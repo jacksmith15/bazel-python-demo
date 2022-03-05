@@ -1,0 +1,13 @@
+load("@python_deps//:requirements.bzl", "requirement")
+load("//tools/library:defs.bzl", "python_library")
+
+
+python_library(
+    name="logging",
+    srcs=glob(["**/*.py"]),
+    deps=[
+        requirement("loguru"),
+    ],
+    imports=["../.."],  # Allow importing as `from core.logging import *`
+    visibility=["//visibility:public"],
+)

@@ -1,0 +1,16 @@
+load("@python_deps//:requirements.bzl", "requirement")
+load("//tools/library:defs.bzl", "python_library")
+
+
+python_library(
+    name="api",
+    srcs=glob(["**/*.py"]),
+    deps=[
+        requirement("fastapi"),
+        "//src/core/logging:logging",
+    ],
+    test_deps=[
+    ],
+    imports=["../.."],
+    visibility=["//visibility:public"],
+)

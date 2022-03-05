@@ -1,0 +1,6 @@
+exports_files(
+    [
+        "mypy_wrapper.py",
+        "mypy.ini",
+    ]
+)

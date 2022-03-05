@@ -1,0 +1,38 @@
+workspace(
+    name="bazel-test",
+)
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# Python rules:
+http_archive(
+    name="rules_python",
+    sha256="a30abdfc7126d497a7698c29c46ea9901c6392d6ed315171a6df5ce433aa4502",
+    strip_prefix="rules_python-0.6.0",
+    url="https://github.com/bazelbuild/rules_python/archive/0.6.0.tar.gz",
+)
+
+register_toolchains("//:python_toolchain")
+
+load("@rules_python//python:pip.bzl", "pip_parse")
+# Create a central repo that knows about the dependencies needed from
+# requirements_lock.txt.
+pip_parse(
+    name="python_deps",
+    requirements_lock="//:requirements_lock.txt",
+)
+# Load the starlark macro which will define your dependencies.
+load("@python_deps//:requirements.bzl", "install_deps")
+# Call it to define repos for your requirements.
+install_deps()
+
+
+# Skylib
+http_archive(
+    name = "bazel_skylib",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
+    ],
+    sha256 = "af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a903de",
+)
