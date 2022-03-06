@@ -18,7 +18,7 @@ register_toolchains("//:python_toolchain")
 
 # Create a central repo that knows about the dependencies needed from Pipfile.lock
 # Each dependency will only be loaded if needed by a target.
-load("//tools/pipenv_repository:defs.bzl", "pipenv_parse")
+load("//tools/pipenv:defs.bzl", "pipenv_parse")
 pipenv_parse(
     name="python_deps",
     pipfile_lock="//:Pipfile.lock",

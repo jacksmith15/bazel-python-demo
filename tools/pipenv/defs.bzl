@@ -1,5 +1,5 @@
 load("@rules_python//python:pip.bzl", "pip_parse")
-load("//tools/pipenv_repository:repositories.bzl", "pipenv_install_internal_dependencies", "all_requirements")
+load("//tools/pipenv:repositories.bzl", "pipenv_install_internal_dependencies", "all_requirements")
 
 _REQUIREMENTS_LOCK = "requirements-lock.txt"
 
@@ -22,7 +22,7 @@ def _pipenv_lock_impl(rctx):
         _REQUIREMENTS_LOCK,
     ]
     result = rctx.execute(
-        ["python", "-m", "tools.pipenv_repository.pipenv_lock.pipenv_lock", rctx.path(rctx.attr.pipfile_lock)],
+        ["python", "-m", "tools.pipenv.pipenv_lock.pipenv_lock", rctx.path(rctx.attr.pipfile_lock)],
         environment = {"PYTHONPATH": _construct_pypath(rctx)},
     )
 
@@ -40,7 +40,7 @@ pipenv_lock = repository_rule(
             allow_single_file=True,
         ),
         "_lock_script": attr.label(
-            default="//tools/pipenv_repository/pipenv_lock/pipenv_lock.py"
+            default="//tools/pipenv/pipenv_lock/pipenv_lock.py"
         )
     },
 )

@@ -44,42 +44,6 @@ _RULE_DEPS = [
         "https://files.pythonhosted.org/packages/21/ac/e07058dc5a6c1b97f751d24f20d4b0ec14d735d77f4a1f78c471d6d13a43/virtualenv_clone-0.5.7-py3-none-any.whl",
         "44d5263bceed0bac3e1424d64f798095233b64def1c5689afa43dc3223caf5b0",
     ),
-
-    # (
-    #     "pypi__click",
-    #     "https://files.pythonhosted.org/packages/76/0a/b6c5f311e32aeb3b406e03c079ade51e905ea630fc19d1262a46249c1c86/click-8.0.1-py3-none-any.whl",
-    #     "fba402a4a47334742d782209a7c79bc448911afe1149d07bdabdf480b3e2f4b6",
-    # ),
-    # (
-    #     "pypi__colorama",
-    #     "https://files.pythonhosted.org/packages/44/98/5b86278fbbf250d239ae0ecb724f8572af1c91f4a11edf4d36a206189440/colorama-0.4.4-py2.py3-none-any.whl",
-    #     "9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2",
-    # ),
-    # (
-    #     "pypi__pip",
-    #     "https://files.pythonhosted.org/packages/47/ca/f0d790b6e18b3a6f3bd5e80c2ee4edbb5807286c21cdd0862ca933f751dd/pip-21.1.3-py3-none-any.whl",
-    #     "78cb760711fedc073246543801c84dc5377affead832e103ad0211f99303a204",
-    # ),
-    # (
-    #     "pypi__pip_tools",
-    #     "https://files.pythonhosted.org/packages/6d/16/75d65bdccd48bb59a08e2bf167b01d8532f65604270d0a292f0f16b7b022/pip_tools-5.5.0-py2.py3-none-any.whl",
-    #     "10841c1e56c234d610d0466447685b9ea4ee4a2c274f858c0ef3c33d9bd0d985",
-    # ),
-    # (
-    #     "pypi__pkginfo",
-    #     "https://files.pythonhosted.org/packages/77/83/1ef010f7c4563e218854809c0dff9548de65ebec930921dedf6ee5981f27/pkginfo-1.7.1-py2.py3-none-any.whl",
-    #     "37ecd857b47e5f55949c41ed061eb51a0bee97a87c969219d144c0e023982779",
-    # ),
-    # (
-    #     "pypi__setuptools",
-    #     "https://files.pythonhosted.org/packages/a2/e1/902fbc2f61ad6243cd3d57ffa195a9eb123021ec912ec5d811acf54a39f8/setuptools-57.1.0-py3-none-any.whl",
-    #     "ddae4c1b9220daf1e32ba9d4e3714df6019c5b583755559be84ff8199f7e1fe3",
-    # ),
-    # (
-    #     "pypi__wheel",
-    #     "https://files.pythonhosted.org/packages/65/63/39d04c74222770ed1589c0eaba06c05891801219272420b40311cd60c880/wheel-0.36.2-py2.py3-none-any.whl",
-    #     "78b5b185f0e5763c26ca1e324373aadd49182ca90e825f7853f4b2509215dc0e",
-    # ),
 ]
 
 _GENERIC_WHEEL = """\
