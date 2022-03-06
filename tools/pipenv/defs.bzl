@@ -43,6 +43,10 @@ pipenv_lock = repository_rule(
             default="//tools/pipenv/pipenv_lock/pipenv_lock.py"
         )
     },
+    doc="""Create a new repository containing a `requirements-lock.txt` generated from a Pipfile.lock.
+
+This is used internally by `pipenv_parse`, to bridge the gap between a Pipfile and `pip_parse`.
+"""
 )
 
 

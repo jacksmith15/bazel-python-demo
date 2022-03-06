@@ -14,12 +14,12 @@ bazel test --test_output=errors //...:all
 
 ## Add a new dependency
 
-Add a new python dependency:
+Run `pipenv install ...` as usual to add a dependency.
 
-1. Add it to the `Pipfile`
-2. Run `./lock`
+A single `Pipfile` and `Pipfile.lock` pair contains the full set of dependencies for the workspace. The `Pipfile.lock` is automatically parsed by Bazel (see [tools/pipenv](./tools/pipenv)), and dependencies are automatically made available to targets based on their `deps`.
 
-> :information_source: This uses pipenv to generate the `requirements-lock.txt` file which is used by Bazel.
+There is no need to distinguish between dev and non-dev dependencies in the Pipfile - each target specifies its own dependencies, `pipenv` is simply used for convenience of transitive dependency resolution and exact locking etc.
+
 
 ## Adding a new Python library
 
