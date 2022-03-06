@@ -1,25 +1,5 @@
 load("@rules_python//python:defs.bzl", "py_runtime_pair")
 
-# TODO: Avoid absolute path to system python.
-# See https://github.com/bazelbuild/rules_python/pull/618/files
-py_runtime(
-    name="python_runtime_3_10_2",
-    interpreter_path="/home/jack/.pyenv/versions/3.10.2/bin/python",
-    python_version="PY3",
-)
-
-py_runtime_pair(
-    name="python_runtime",
-    py2_runtime=None,
-    py3_runtime=":python_runtime_3_10_2",
-)
-
-toolchain(
-    name="python_toolchain",
-    toolchain=":python_runtime",
-    toolchain_type="@rules_python//python:toolchain_type",
-)
-
 exports_files(
     ["Pipfile", "Pipfile.lock"]
 )

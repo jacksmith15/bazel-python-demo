@@ -6,22 +6,43 @@ Based on https://github.com/pypa/pipenv/issues/2800#issuecomment-526212720
 """
 import json
 import sys
-from functools import partial
+from functools import cache, partial
 from pathlib import Path
 from typing import TextIO
 
+from pipenv.patched.pipfile.api import Pipfile
+from pipenv.vendor.requirementslib import Requirement
 
-def main(pipfile_lock: str = "Pipfile.lock", output_path: str = "requirements-lock.txt"):
+def main(pipfile: str = "Pipfile", pipfile_lock: str = "Pipfile.lock", output_path: str = "requirements-lock.txt"):
+    """Convert a Pipfile.lock to requirements.txt format, without depending on a virtualenv.
+
+    This is effectively a lightweight version of:
+
+    ```
+    pipenv lock --keep-outdated --requirements
+    ```
+
+    But additionally includes hashes in the generated lockfile.
+    """
+    verify_lockfile(pipfile, pipfile_lock)
     with open(output_path, "w", encoding="utf-8") as file:
         generate_lockfile(pipfile_lock, file)
 
 
+def verify_lockfile(pipfile: str, pipfile_lock: str) -> None:
+    """Check that Pipfile.lock is up-to-date."""
+    if Pipfile.load(pipfile).hash != load_lockfile(pipfile_lock)["_meta"]["hash"]["sha256"]:
+        raise RuntimeError(
+            f"The lockfile ({pipfile_lock} is not up-to-date with the pipfile ({pipfile}). "
+            "Run `pipenv lock` before building."
+        )
+
+
 def generate_lockfile(pipfile_lock: str = "Pipfile.lock", out: TextIO = sys.stdout):
-    from pipenv.vendor.requirementslib import Requirement
+    """Generate the lockfile in requirements.txt format."""
     print_out = partial(print, file=out)
 
-    path = Path(pipfile_lock)
-    lock = json.loads(path.read_text(encoding="utf-8"))
+    lock = load_lockfile(pipfile_lock)
     for source in lock.get("_meta", {}).get("sources", []):
         url = source["url"]
         if source["name"] == "pypi":
@@ -32,6 +53,11 @@ def generate_lockfile(pipfile_lock: str = "Pipfile.lock", out: TextIO = sys.stdo
         for name, entry in section.items():
             requirement = Requirement.from_pipfile(name, entry)
             print_out(requirement.as_line())
+
+
+@cache
+def load_lockfile(pipfile_lock: str) -> dict:
+    return json.loads(Path(pipfile_lock).read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

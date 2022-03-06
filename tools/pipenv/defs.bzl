@@ -14,15 +14,21 @@ exports_files(["{}"])
 def _pipenv_lock_impl(rctx):
     python_interpreter = _resolve_python_interpreter(rctx)
 
+    # result = rctx.execute(
+    #     [python_interpreter, "--version"]
+    # )
+    # fail("{}\n{}".format(result.stdout, result.stderr))
+
     rctx.file("BUILD.bazel", _BUILD_FILE_CONTENTS)
-    args = [
-        python_interpreter,
-        "pipenv_lock.py",
-        rctx.path(rctx.attr.pipfile_lock),
-        _REQUIREMENTS_LOCK,
-    ]
+    # args = [
+    #     python_interpreter,
+    #     "pipenv_lock.py",
+    #     rctx.path(rctx.attr.pipfile),
+    #     rctx.path(rctx.attr.pipfile_lock),
+    #     _REQUIREMENTS_LOCK,
+    # ]
     result = rctx.execute(
-        ["python", "-m", "tools.pipenv.pipenv_lock.pipenv_lock", rctx.path(rctx.attr.pipfile_lock)],
+        [python_interpreter, "-m", "tools.pipenv.pipenv_lock.pipenv_lock", rctx.path(rctx.attr.pipfile), rctx.path(rctx.attr.pipfile_lock), _REQUIREMENTS_LOCK],
         environment = {"PYTHONPATH": _construct_pypath(rctx)},
     )
 
@@ -34,6 +40,7 @@ def _pipenv_lock_impl(rctx):
 pipenv_lock = repository_rule(
     implementation=_pipenv_lock_impl,
     attrs={
+        "pipfile": attr.label(allow_single_file=True),
         "pipfile_lock": attr.label(allow_single_file=True),
         "python_interpreter": attr.string(),
         "python_interpreter_target": attr.label(
@@ -52,6 +59,7 @@ This is used internally by `pipenv_parse`, to bridge the gap between a Pipfile a
 
 def pipenv_parse(
     name,
+    pipfile="//:Pipfile",
     pipfile_lock="//:Pipfile.lock",
     **kwargs
 ):
@@ -64,6 +72,7 @@ def pipenv_parse(
     lockfile_repo_name = "{}_lockfile".format(name)
     pipenv_lock(
         name=lockfile_repo_name,
+        pipfile=pipfile,
         pipfile_lock=pipfile_lock,
         **{key: value for key, value in kwargs.items() if key in ("python_interpreter", "python_interpreter_target")}
     )

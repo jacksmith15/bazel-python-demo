@@ -10,6 +10,7 @@ python_library(
     ],
     test_deps=[
         requirement("pytest"),
+        requirement("requests"),
     ],
     imports=["../.."],
     visibility=["//visibility:public"],

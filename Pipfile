@@ -13,6 +13,7 @@ mypy = "==0.931"
 types-requests = "~=2.27"
 loguru-mypy = "==0.0.4"
 furl = "~=2.1"
+requests = "~=2.27"
 
 [dev-packages]
 

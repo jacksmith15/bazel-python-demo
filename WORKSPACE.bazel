@@ -7,13 +7,20 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 # Python rules:
 http_archive(
     name="rules_python",
-    sha256="a30abdfc7126d497a7698c29c46ea9901c6392d6ed315171a6df5ce433aa4502",
-    strip_prefix="rules_python-0.6.0",
-    url="https://github.com/bazelbuild/rules_python/archive/0.6.0.tar.gz",
+    sha256="15f84594af9da06750ceb878abbf129241421e3abbd6e36893041188db67f2fb",
+    strip_prefix="rules_python-0.7.0",
+    url="https://github.com/bazelbuild/rules_python/archive/refs/tags/0.7.0.tar.gz",
 )
 
-# Register the Python toolchain (defined in BUILD.bazel):
-register_toolchains("//:python_toolchain")
+
+# Install Python:
+load("@rules_python//python:repositories.bzl", "python_register_toolchains")
+python_register_toolchains(
+    name="python",
+    # Available versions are listed in @rules_python//python:versions.bzl.
+    python_version="3.10.2",
+)
+load("@python_resolved_interpreter//:defs.bzl", "interpreter")
 
 
 # Create a central repo that knows about the dependencies needed from Pipfile.lock
@@ -21,7 +28,9 @@ register_toolchains("//:python_toolchain")
 load("//tools/pipenv:defs.bzl", "pipenv_parse")
 pipenv_parse(
     name="python_deps",
+    pipfile="//:Pipfile",
     pipfile_lock="//:Pipfile.lock",
+    python_interpreter_target=interpreter,
 )
 
 # Create repos for each dependency in python_deps
@@ -31,10 +40,10 @@ install_deps()
 
 # Install skylib
 http_archive(
-    name = "bazel_skylib",
-    urls = [
+    name="bazel_skylib",
+    urls=[
         "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
         "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
     ],
-    sha256 = "af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a903de",
+    sha256="af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a903de",
 )
