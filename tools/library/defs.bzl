@@ -1,5 +1,6 @@
 load("//tools/pytest:defs.bzl", "pytest_test")
 load("//tools/mypy:defs.bzl", "mypy_test")
+load("//tools/black:defs.bzl", "black_test")
 
 
 def python_library(
@@ -45,6 +46,12 @@ def python_library(
         data = native.glob(["py.typed"])
 
     sources = _extract_sources(srcs)
+
+    black_test(
+        name="{}_black".format(name),
+        srcs=sources.sources + sources.test_sources,
+        **kwargs,
+    )
 
     native.py_library(
         name=name,

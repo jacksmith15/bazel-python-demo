@@ -1,0 +1,6 @@
+exports_files(
+    [
+        "black_wrapper.py",
+        "pyproject.toml",
+    ]
+)

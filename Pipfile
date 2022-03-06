@@ -14,6 +14,7 @@ types-requests = "~=2.27"
 loguru-mypy = "==0.0.4"
 furl = "~=2.1"
 requests = "~=2.27"
+black = "~=22.1"
 
 [dev-packages]
 

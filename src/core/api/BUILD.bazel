@@ -1,5 +1,6 @@
 load("@python_deps//:requirements.bzl", "requirement")
 load("//tools/library:defs.bzl", "python_library")
+load("//tools/black:defs.bzl", "black_test")
 
 
 python_library(
