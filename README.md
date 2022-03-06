@@ -65,7 +65,7 @@ pipenv run format
 
 ## TODOS
 
-- `pylint`, `pydocstyle` etc.
+- `pydocstyle` etc.
 - IDE integration??? PYTHONPATH is all over the place.
 - `PACKAGECLOUD_TOKEN` support (stamps? --define?)
 - Packaging support (i.e. publishing wheels, building and publishing docker images).

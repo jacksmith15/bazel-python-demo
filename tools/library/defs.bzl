@@ -83,6 +83,17 @@ def python_library(
         pyproject=pyproject,
     )
 
+    pylint_test(
+        name="{}_pylint_srcs".format(name),
+        srcs=sources.sources,
+        deps=deps,
+        pylintrc=Label("//tools/library/config:sources.pylintrc"),
+        imports=imports,
+    )
+
+    if not sources.test_sources:
+        return
+
     mypy_test(
         name="{}_typecheck_tests".format(name),
         srcs=sources.test_sources + sources.test_stubs,
@@ -90,14 +101,6 @@ def python_library(
         deps=test_deps,
         data=sources.test_stubs,
         pyproject=pyproject,
-    )
-
-    pylint_test(
-        name="{}_pylint_srcs".format(name),
-        srcs=sources.sources,
-        deps=deps,
-        pylintrc=Label("//tools/library/config:sources.pylintrc"),
-        imports=imports,
     )
 
     pylint_test(
