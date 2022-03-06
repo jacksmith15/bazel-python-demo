@@ -1,0 +1,6 @@
+exports_files(
+    [
+        "sources.pylintrc",
+        "tests.pylintrc",
+    ]
+)

@@ -12,12 +12,14 @@ class ContentType(BaseModel):
     abstract: ClassVar[bool] = True
 
     def __init_subclass__(cls, *super_classes, content_type: str = None, abstract: bool = False):
+
         if not content_type and not abstract:
             raise ValueError("Must set the content type name when defining a new content type.")
         if content_type and ("-" in content_type or "." in content_type):
             raise ValueError("The content type name may not include characters '.' or '-'.")
         cls.content_type = content_type
         cls.abstract = abstract
+        super().__init_subclass__(*super_classes)
 
     @classmethod
     def index(cls, language: str) -> Index:

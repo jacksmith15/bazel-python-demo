@@ -1,5 +1,4 @@
 from functools import wraps
-from typing import Any, Callable, Coroutine, Dict, List, Optional, Sequence, Type, Union
 
 from fastapi import FastAPI
 

@@ -2,7 +2,6 @@
 
 load("@rules_python//python:defs.bzl", "py_test")
 load("@python_deps//:requirements.bzl", "requirement")
-load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 
 def pytest_test(
@@ -16,7 +15,7 @@ def pytest_test(
 ):
     # Create the test target:
     if requirement("pytest") not in deps:
-        deps.append(requirement("pytest"))
+        deps = deps + [requirement("pytest")]
     py_test(
         name=name,
         srcs=[
@@ -33,7 +32,6 @@ def pytest_test(
         srcs_version="PY3",
         deps=deps,
         data=[
-            # ":{}".format(config_name),
             pyproject,
         ]
         + data,

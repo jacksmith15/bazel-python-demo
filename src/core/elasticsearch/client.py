@@ -6,8 +6,9 @@ from core.elasticsearch.configuration import get_settings
 
 
 @cache
-def elasticsearch_client(timeout: float | None) -> AsyncElasticsearch:
+def elasticsearch_client(timeout: float | None = None) -> AsyncElasticsearch:
     client = AsyncElasticsearch(
         get_settings().elasticsearch_hosts,
     )
+    del timeout  # TODO: use this
     return client

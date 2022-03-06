@@ -37,7 +37,7 @@ class TestAPI:
         output = log_stream.getvalue().splitlines()
         value = json.loads(output[-1])
         assert set(value) == {"level", "time", "http", "message"}
-        time = value.pop("time")
+        value.pop("time")
         http = value.pop("http")
         assert value == {"level": "INFO", "message": "HTTP response"}
 

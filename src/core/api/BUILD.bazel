@@ -1,5 +1,6 @@
 load("@python_deps//:requirements.bzl", "requirement")
 load("//tools/library:defs.bzl", "python_library")
+# load("//tools/pylint:defs.bzl", "pylint_test")
 
 
 python_library(
@@ -15,3 +16,11 @@ python_library(
     imports=["../.."],
     visibility=["//visibility:public"],
 )
+
+
+# pylint_test(
+#     name="api_pylint",
+#     srcs=glob(["**/*.py"]),
+#     deps=[":api"],
+#     pylintrc="//tools/pylint:.pylintrc",
+# )

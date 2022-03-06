@@ -1,5 +1,5 @@
 exports_files(
     [
-        "black_wrapper.py",
+        "pylint_wrapper.py",
     ]
 )

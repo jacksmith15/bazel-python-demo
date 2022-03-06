@@ -2,6 +2,7 @@ load("//tools/pytest:defs.bzl", "pytest_test")
 load("//tools/mypy:defs.bzl", "mypy_test")
 load("//tools/black:defs.bzl", "black_test")
 load("//tools/isort:defs.bzl", "isort_test")
+load("//tools/pylint:defs.bzl", "pylint_test")
 
 
 def python_library(
@@ -74,7 +75,6 @@ def python_library(
     # We can replace deps to point at library above (existing ones become transitive):
     test_deps.append(":{}".format(name))
 
-    # TODO: Allow settings mypy opts and overriding mypy.ini
     mypy_test(
         name="{}_typecheck_srcs".format(name),
         srcs=sources.sources,# + sources.stubs,
@@ -90,6 +90,22 @@ def python_library(
         deps=test_deps,
         data=sources.test_stubs,
         pyproject=pyproject,
+    )
+
+    pylint_test(
+        name="{}_pylint_srcs".format(name),
+        srcs=sources.sources,
+        deps=deps,
+        pylintrc=Label("//tools/library/config:sources.pylintrc"),
+        imports=imports,
+    )
+
+    pylint_test(
+        name="{}_pylint_tests".format(name),
+        srcs=sources.test_sources,
+        deps=test_deps,
+        pylintrc=Label("//tools/library/config:tests.pylintrc"),
+        imports=imports,
     )
 
     pytest_test(

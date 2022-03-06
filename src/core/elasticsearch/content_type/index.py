@@ -1,16 +1,8 @@
 from __future__ import annotations
 
 import asyncio
-from abc import ABC, abstractmethod
 from datetime import datetime
-from enum import Enum
-from functools import cached_property
 from typing import List, Optional
-
-import elasticsearch
-from elasticsearch import AsyncElasticsearch
-from elasticsearch._async.client.indices import IndicesClient
-from elasticsearch.exceptions import NotFoundError
 
 from core.elasticsearch.client import elasticsearch_client
 from core.elasticsearch.configuration import get_settings

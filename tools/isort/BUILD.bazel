@@ -1,6 +1,5 @@
 exports_files(
     [
         "isort_wrapper.py",
-        "pyproject.toml",
     ]
 )

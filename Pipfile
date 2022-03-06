@@ -16,6 +16,8 @@ furl = "~=2.1"
 requests = "~=2.27"
 black = "~=22.1"
 isort = "~=5.10.1"
+pylint = "~=2.12"
+astroid = "==2.9.0"
 
 [dev-packages]
 
