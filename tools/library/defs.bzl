@@ -1,6 +1,7 @@
 load("//tools/pytest:defs.bzl", "pytest_test")
 load("//tools/mypy:defs.bzl", "mypy_test")
 load("//tools/black:defs.bzl", "black_test")
+load("//tools/isort:defs.bzl", "isort_test")
 
 
 def python_library(
@@ -11,6 +12,7 @@ def python_library(
     test_data=[],
     test_deps=[],
     imports=[],
+    pyproject="//:pyproject.toml",
     **kwargs
 ):
     """A macro for declaring a python library, complete with tests and typechecking.
@@ -50,7 +52,14 @@ def python_library(
     black_test(
         name="{}_black".format(name),
         srcs=sources.sources + sources.test_sources,
+        pyproject=pyproject,
         **kwargs,
+    )
+
+    isort_test(
+        name="{}_isort".format(name),
+        srcs=sources.sources + sources.test_sources,
+        pyproject=pyproject,
     )
 
     native.py_library(
@@ -87,6 +96,7 @@ def python_library(
         imports=imports,
         data=test_data,
         deps=test_deps,
+        pyproject=pyproject,
         **kwargs,
     )
 

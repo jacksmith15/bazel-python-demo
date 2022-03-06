@@ -1,6 +1,5 @@
 load("@python_deps//:requirements.bzl", "requirement")
 load("//tools/library:defs.bzl", "python_library")
-load("//tools/isort:defs.bzl", "isort_test")
 
 
 python_library(
@@ -15,10 +14,4 @@ python_library(
     ],
     imports=["../.."],
     visibility=["//visibility:public"],
-)
-
-
-isort_test(
-    name="api_isort",
-    srcs=glob(["**/*.py"]),
 )

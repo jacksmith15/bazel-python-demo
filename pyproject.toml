@@ -24,3 +24,11 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 120
+
+[tool.pytest.ini_options]
+python_functions = "should_*"
+
+# Structure: https://docs.pytest.org/en/stable/warnings.html
+# Values:    https://docs.python.org/3/library/warnings.html#describing-warning-filters
+#            action:message:category:module:line
+filterwarnings = []
