@@ -16,27 +16,6 @@ def main(pipfile_lock: str = "Pipfile.lock", output_path: str = "requirements-lo
         generate_lockfile(pipfile_lock, file)
 
 
-def generate_lockfile_no_deps(
-    pipfile_lock: str = "Pipfile.lock",
-    out: TextIO = sys.stdout,
-):
-    """Basic version until pipenv dependency is solved."""
-    print_out = partial(print, file=out)
-    path = Path(pipfile_lock)
-    lock = json.loads(path.read_text(encoding="utf-8"))
-    for source in lock.get("_meta", {}).get("sources", []):
-        url = source["url"]
-        if source["name"] == "pypi":
-            print_out(f"-i {url}")
-        else:
-            print_out(f"--extra-index-url {url}")
-    for section in [lock["default"], lock["develop"]]:
-        for name, entry in section.items():
-            version = entry["version"]
-            extras = f"[{','.join(entry['extras'])}]" if "extras" in entry else ""
-            print_out(f"{name}{extras}{version}")
-
-
 def generate_lockfile(pipfile_lock: str = "Pipfile.lock", out: TextIO = sys.stdout):
     from pipenv.vendor.requirementslib import Requirement
     print_out = partial(print, file=out)
