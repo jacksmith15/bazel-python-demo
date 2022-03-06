@@ -1,5 +1,5 @@
 load("@rules_python//python:defs.bzl", "py_runtime_pair")
 
 exports_files(
-    ["Pipfile", "Pipfile.lock"]
+    ["Pipfile", "Pipfile.lock", "pyproject.toml"]
 )

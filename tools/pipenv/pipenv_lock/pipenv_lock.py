@@ -13,6 +13,7 @@ from typing import TextIO
 from pipenv.patched.pipfile.api import Pipfile
 from pipenv.vendor.requirementslib import Requirement
 
+
 def main(pipfile: str = "Pipfile", pipfile_lock: str = "Pipfile.lock", output_path: str = "requirements-lock.txt"):
     """Convert a Pipfile.lock to requirements.txt format, without depending on a virtualenv.
 

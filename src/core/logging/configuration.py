@@ -6,6 +6,7 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING, Any, TextIO
 
 import loguru
+
 if TYPE_CHECKING:
     from loguru import Logger, Message, Record
 

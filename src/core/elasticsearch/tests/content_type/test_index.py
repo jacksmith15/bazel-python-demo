@@ -10,8 +10,7 @@ class TestIndex:
         [
             ("en", "users", False, "gs2.en_users.read"),
             ("en", "users", True, "gs2.en_users.write"),
-        ]
-
+        ],
     )
     def should_produce_correct_aliases(language: str, content_type: str, write: bool, expected: str):
         index = Index(content_type, language)

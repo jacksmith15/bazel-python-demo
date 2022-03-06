@@ -12,8 +12,8 @@ from elasticsearch import AsyncElasticsearch
 from elasticsearch._async.client.indices import IndicesClient
 from elasticsearch.exceptions import NotFoundError
 
-from core.elasticsearch.configuration import get_settings
 from core.elasticsearch.client import elasticsearch_client
+from core.elasticsearch.configuration import get_settings
 
 
 class Alias:

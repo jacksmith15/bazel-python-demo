@@ -15,8 +15,12 @@ loguru-mypy = "==0.0.4"
 furl = "~=2.1"
 requests = "~=2.27"
 black = "~=22.1"
+isort = "~=5.10.1"
 
 [dev-packages]
+
+[scripts]
+format = "bash format.sh"
 
 [requires]
 python_version = "3.10"

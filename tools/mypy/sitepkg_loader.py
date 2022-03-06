@@ -50,9 +50,9 @@ def get_extended_sitepackages():
 
 
 if __name__ == "__main__":
-    if sys.argv[-1] == 'getsitepackages':
+    if sys.argv[-1] == "getsitepackages":
         print(repr(list(get_extended_sitepackages())))
-    elif sys.argv[-1] == 'getprefixes':
+    elif sys.argv[-1] == "getprefixes":
         print(repr(getprefixes()))
     else:
         print("ERROR: incorrect argument to pyinfo.py.", file=sys.stderr)

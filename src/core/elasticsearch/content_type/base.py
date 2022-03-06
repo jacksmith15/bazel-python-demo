@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from core.elasticsearch.content_type.index import Index
 
+
 class ContentType(BaseModel):
     id: str
 

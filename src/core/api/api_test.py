@@ -5,10 +5,11 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from core.logging import setup_logger
 from core.api.api import create_api
+from core.logging import setup_logger
 
 api: FastAPI = create_api()
+
 
 @api.get("/path")
 def get():
