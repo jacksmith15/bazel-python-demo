@@ -19,3 +19,7 @@ toolchain(
     toolchain=":python_runtime",
     toolchain_type="@rules_python//python:toolchain_type",
 )
+
+exports_files(
+    ["Pipfile", "Pipfile.lock"]
+)

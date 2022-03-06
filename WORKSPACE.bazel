@@ -12,22 +12,24 @@ http_archive(
     url="https://github.com/bazelbuild/rules_python/archive/0.6.0.tar.gz",
 )
 
+# Register the Python toolchain (defined in BUILD.bazel):
 register_toolchains("//:python_toolchain")
 
-load("@rules_python//python:pip.bzl", "pip_parse")
-# Create a central repo that knows about the dependencies needed from
-# requirements_lock.txt.
-pip_parse(
+
+# Create a central repo that knows about the dependencies needed from Pipfile.lock
+# Each dependency will only be loaded if needed by a target.
+load("//tools/pipenv_repository:defs.bzl", "pipenv_parse")
+pipenv_parse(
     name="python_deps",
-    requirements_lock="//:requirements-lock.txt",
+    pipfile_lock="//:Pipfile.lock",
 )
-# Load the starlark macro which will define your dependencies.
+
+# Create repos for each dependency in python_deps
 load("@python_deps//:requirements.bzl", "install_deps")
-# Call it to define repos for your requirements.
 install_deps()
 
 
-# Skylib
+# Install skylib
 http_archive(
     name = "bazel_skylib",
     urls = [

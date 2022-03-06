@@ -12,6 +12,7 @@ elasticsearch = {version="~=7.16", extras=["async"]}
 mypy = "==0.931"
 types-requests = "~=2.27"
 loguru-mypy = "==0.0.4"
+furl = "~=2.1"
 
 [dev-packages]
 
