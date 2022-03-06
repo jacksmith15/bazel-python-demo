@@ -80,6 +80,7 @@ def python_library(
         srcs=sources.sources,# + sources.stubs,
         imports=imports,
         deps=test_deps,
+        pyproject=pyproject,
     )
 
     mypy_test(
@@ -88,6 +89,7 @@ def python_library(
         imports=imports,
         deps=test_deps,
         data=sources.test_stubs,
+        pyproject=pyproject,
     )
 
     pytest_test(

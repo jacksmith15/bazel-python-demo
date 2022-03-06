@@ -11,8 +11,8 @@ def _mypy_test_impl(ctx):
         # The following two flags are necessary for bazel implicit namespace package structure:
         "--namespace-packages",
         "--explicit-package-bases",
-        # Config file (can be overriden via the `mypy_ini` attr passed to the rule)
-        "--config-file={}/{}".format(ctx.attr.mypy_ini.label.package, ctx.attr.mypy_ini.label.name),
+        # Config file (can be overriden via the `pyproject` attr passed to the rule)
+        "--config-file={}".format(_resolve_pyproject(ctx.attr.pyproject.label)),
         # Hack to ensure third party dependency type hints are used (including PEP-561) - see `sitepkg_loader.py`:
         "--python-executable={}".format(_resolve_executable(ctx.executable._sitepkg_loader))
     ] + ctx.attr.opts  # User options
@@ -64,7 +64,7 @@ def _extract_transitive_depsets(ctx):
     transitive_deps = [
         ctx.attr._mypy_cli.default_runfiles.files,  # Include the mypy executable
         ctx.attr._sitepkg_loader.default_runfiles.files,  # And the site-packages loader
-        ctx.attr.mypy_ini.files,  # And the mypy configuration file
+        ctx.attr.pyproject.files,  # And the mypy configuration file
         depset(direct=_extract_direct_srcs(ctx.attr.data)),  # Any data files (e.g. .pyi files)
     ]
     # Transitive files from any dependencies:
@@ -99,6 +99,12 @@ def _resolve_executable(executable):
     return executable.path
 
 
+def _resolve_pyproject(label):
+    if label.package:
+        return "{}/{}".format(label.package, label.name)
+    return label.name
+
+
 mypy_test = rule(
     implementation=_mypy_test_impl,
     attrs={
@@ -107,7 +113,10 @@ mypy_test = rule(
         "deps": attr.label_list(),
         "imports": attr.string_list(),
         "opts": attr.string_list(),
-        "mypy_ini": attr.label(default=Label("//tools/mypy:mypy.ini"), allow_single_file=True),
+        "pyproject": attr.label(
+            default=Label("//:pyproject.toml"),
+            allow_single_file=True,
+        ),
         "_mypy_cli": attr.label(
             default=Label("//tools/mypy:mypy"),
             executable=True,

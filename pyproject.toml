@@ -32,3 +32,16 @@ python_functions = "should_*"
 # Values:    https://docs.python.org/3/library/warnings.html#describing-warning-filters
 #            action:message:category:module:line
 filterwarnings = []
+
+
+[tool.mypy]
+show_column_numbers = true
+show_error_codes = true
+color_output = true
+warn_unused_configs = true
+warn_unused_ignores = true
+follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+module = []
+ignore_missing_imports = true
