@@ -54,9 +54,9 @@ This takes care of collecting Python sources, and creating targets for tests, ty
 
 ## TODOS
 
-- `pylint`, `black`, `isort` etc.
+- `pylint`, `pydocstyle` etc.
 - IDE integration??? PYTHONPATH is all over the place.
-- `PACKAGECLOUD_TOKEN` support
+- `PACKAGECLOUD_TOKEN` support (stamps? --define?)
 - Packaging support (i.e. publishing wheels, building and publishing docker images).
 - Running tests for multiple python versions?
 - Maybe remote caching?
