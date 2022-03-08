@@ -54,13 +54,11 @@ This takes care of collecting Python sources, and creating targets for tests, ty
 
 ## Run the formatter
 
-This currently must be run outside of `bazel`. You can build a local virtualenv using `pipenv sync --dev` and run the formatter using
-
-```bash
-pipenv run format
-```
+> :warning: This currently doesn't work, because isort sections are different depending on the context.
 
 > :information_source: Bazel will check that the formatter has been run, but not reformat the files, since bazel operates on sandboxed copies of the source files.
+
+Run `format.sh`.
 
 
 ## TODOS

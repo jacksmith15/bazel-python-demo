@@ -60,6 +60,7 @@ def python_library(
     isort_test(
         name="{}_isort".format(name),
         srcs=sources.sources + sources.test_sources,
+        deps=deps + test_deps,
         pyproject=pyproject,
     )
 

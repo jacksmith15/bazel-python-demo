@@ -5,8 +5,10 @@ load("@python_deps//:requirements.bzl", "requirement")
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 
-def isort_test(name, srcs, args=[], pyproject="//:pyproject.toml", **kwargs):
+def isort_test(name, srcs, args=[], deps=[], pyproject="//:pyproject.toml", **kwargs):
     # Create the test target:
+    if requirement("isort") not in deps:
+        deps = deps + [requirement("isort")]
     py_test(
         name=name,
         srcs=[
@@ -18,11 +20,11 @@ def isort_test(name, srcs, args=[], pyproject="//:pyproject.toml", **kwargs):
             # Default args can go here
         ]
         + args
-        + ["--check"]
+        + ["--check", "--diff"]
         + ["$(location :%s)" % x for x in srcs],
         python_version="PY3",
         srcs_version="PY3",
-        deps=[requirement("isort")],
+        deps=deps,
         data=[pyproject],
         **kwargs,
     )
