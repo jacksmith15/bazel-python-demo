@@ -21,8 +21,6 @@ astroid = "==2.9.0"
 
 [dev-packages]
 
-[scripts]
-format = "bash format.sh"
 
 [requires]
 python_version = "3.10"

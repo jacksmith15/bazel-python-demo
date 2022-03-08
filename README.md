@@ -54,11 +54,12 @@ This takes care of collecting Python sources, and creating targets for tests, ty
 
 ## Run the formatter
 
-> :warning: This currently doesn't work, because isort sections are different depending on the context.
 
-> :information_source: Bazel will check that the formatter has been run, but not reformat the files, since bazel operates on sandboxed copies of the source files.
+```bash
+./format.sh
+```
 
-Run `format.sh`.
+> :information_source: This doesn't happen automatically as part of `bazel build`. `bazel test` will check that the formatter has been run, but not reformat the files. This is because bazel operates on sandboxed copies of the source files, and also because formatting during a build would invalidate caching.
 
 
 ## TODOS
