@@ -1,5 +1,21 @@
+load("@python_deps//:requirements.bzl", "requirement")
+
 exports_files(
     [
         "isort_wrapper.py",
     ]
+)
+
+py_binary(
+    name="isort",
+    srcs=["isort_wrapper.py"],
+    main="isort_wrapper.py",
+    deps=[
+        requirement("isort"),
+    ],
+    data=[
+        "//:pyproject.toml"
+    ],
+    visibility=["//visibility:public"],
+    python_version="PY3",
 )
