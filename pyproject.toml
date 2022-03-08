@@ -43,5 +43,7 @@ warn_unused_ignores = true
 follow_imports = "silent"
 
 [[tool.mypy.overrides]]
-module = []
+module = [
+    "uvicorn.*",
+]
 ignore_missing_imports = true

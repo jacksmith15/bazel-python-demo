@@ -18,9 +18,9 @@ black = "~=22.1"
 isort = "~=5.10.1"
 pylint = "~=2.12"
 astroid = "==2.9.0"
+uvicorn = "~=0.17.5"
 
 [dev-packages]
-
 
 [requires]
 python_version = "3.10"
