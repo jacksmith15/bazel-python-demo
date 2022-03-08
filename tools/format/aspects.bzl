@@ -1,6 +1,9 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
 
 
+# TODO: isort needs to execute as though the full set of dependencies are available, so it can correctly
+# detect the import sections (third-party vs first-party).
+
 VALID_RULE_TYPES = ["py_library"]
 
 
