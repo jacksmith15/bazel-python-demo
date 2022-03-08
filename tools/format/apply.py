@@ -20,7 +20,9 @@ def main(repo_root: str, genfiles_root: str):
     formatter_output_dirs = find_formatter_output_dirs(genfiles_root)
 
     for unformatted_file, formatted_file in get_formatted_files(repo_root, genfiles_root).items():
-        shutil.copy(formatted_file, unformatted_file)
+        content = formatted_file.read_text(encoding="utf-8")
+        with open(unformatted_file, "w", encoding="utf-8") as file:
+            file.write(content)
 
 
 def get_formatted_files(repo_root: str, genfiles_root: str) -> dict[Path, Path]:
