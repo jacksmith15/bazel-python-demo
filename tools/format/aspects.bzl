@@ -1,9 +1,6 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
 
 
-# TODO: isort needs to execute as though the full set of dependencies are available, so it can correctly
-# detect the import sections (third-party vs first-party).
-
 VALID_RULE_TYPES = ["py_library"]
 
 
@@ -63,7 +60,10 @@ def _format_aspect_impl(target, ctx):
 
     ctx.actions.run(
         outputs=output_files,
-        inputs=source_files,
+        # inputs=source_files,
+        inputs=depset(
+            direct=source_files, transitive=[dep.default_runfiles.files for dep in getattr(ctx.rule.attr, "deps", [])]
+        ),
         executable=formatter,
         tools=tools,
         arguments=source_output_pairs,
