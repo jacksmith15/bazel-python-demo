@@ -8,9 +8,6 @@ from pathlib import Path
 from typing import Callable
 
 
-# TODO: Figure out the arguments
-
-
 def main():
     """A script which copies the formatted outputs back into the sources.
 
