@@ -2,13 +2,13 @@
 
 import argparse
 import difflib
+import os
 import shutil
 from pathlib import Path
 from typing import Callable
 
 
 # TODO: Figure out the arguments
-# TODO: Fix overwriting with old files
 
 
 def main():
@@ -42,7 +42,7 @@ def main():
                 print(color_line(line))
         else:
             with open(unformatted_file, "w", encoding="utf-8") as file:
-                file.write(content)
+                file.write(formatted_content)
 
 
 def parse_args():
@@ -74,6 +74,11 @@ def get_formatted_files(workspace_root: str, genfiles_root: str) -> dict[Path, P
             target = Path(workspace_root) / formatted_file.relative_to(output_dir)
             if not target.exists():
                 print(f"Skipping non-existent target: {target!r}")
+            if target in result:
+                # Keep the latest formatted version of a file (if there are multiple). This avoids situations where a
+                # renamed target accidentally reverts changes.
+                if os.path.getmtime(formatted_file) <= os.path.getmtime(result[target]):
+                    continue
             result[target] = formatted_file
     return result
 
