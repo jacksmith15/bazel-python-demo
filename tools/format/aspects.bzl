@@ -1,7 +1,7 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
 
 
-VALID_RULE_TYPES = ["py_library"]
+VALID_RULE_TYPES = ["py_library", "py_test"]
 
 
 _FORMATTER_TEMPLATE = """#!/usr/bin/env bash
