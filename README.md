@@ -54,12 +54,20 @@ This takes care of collecting Python sources, and creating targets for tests, ty
 
 ## Run the formatter
 
+To run the formatter (`black` and `isort`):
 
 ```bash
 ./format.sh
 ```
 
 > :information_source: This doesn't happen automatically as part of `bazel build`. `bazel test` will check that the formatter has been run, but not reformat the files. This is because bazel operates on sandboxed copies of the source files, and also because formatting during a build would invalidate caching.
+
+
+You can also just output the formatted diff without changing any files:
+
+```bash
+./format.sh --diff
+```
 
 
 ## TODOS
