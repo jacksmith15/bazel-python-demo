@@ -3,9 +3,8 @@ load("//tools/library:defs.bzl", "python_library")
 
 
 python_library(
-    name="content_type",
     deps=[
-        "//src/core/elasticsearch"
+        "//src/core/elasticsearch:lib"
     ],
     test_deps=[
         requirement("pytest"),

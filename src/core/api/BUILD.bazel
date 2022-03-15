@@ -1,13 +1,11 @@
 load("@python_deps//:requirements.bzl", "requirement")
 load("//tools/library:defs.bzl", "python_library")
-# load("//tools/pylint:defs.bzl", "pylint_test")
 
 
 python_library(
-    name="api",
     deps=[
         requirement("fastapi"),
-        "//src/core/logging:logging",
+        "//src/core/logging:lib",
     ],
     test_deps=[
         requirement("pytest"),
@@ -16,11 +14,3 @@ python_library(
     imports=["../.."],
     visibility=["//visibility:public"],
 )
-
-
-# pylint_test(
-#     name="api_pylint",
-#     srcs=glob(["**/*.py"]),
-#     deps=[":api"],
-#     pylintrc="//tools/pylint:.pylintrc",
-# )

@@ -6,7 +6,7 @@ load("//tools/pylint:defs.bzl", "pylint_test")
 
 
 def python_library(
-    name,
+    name=None,
     srcs=None,
     data=None,
     deps=[],
@@ -24,7 +24,6 @@ def python_library(
 
     ```
     python_library(
-        name="my_library",
         srcs=glob(["**/*.py", "**/*.pyi"]), # Omit this argument for sensible default behaviour
         data=[  # If not provided, collect sensible defaults if present e.g. `py.typed`
             "py.typed",
@@ -42,7 +41,14 @@ def python_library(
         imports=[".."],  # Add the parent directory to PYTHONPATH
     )
     ```
+
+    The names for resulting targets are auto-generated. To create multiple in the same BUILD file,
+    you can provide the `name` argument, which will be used as a prefix for target names.
     """
+    def make_name(subname):
+        prefix = "{}.".format(name) if name else ""
+        return "{}{}".format(prefix, subname)
+
     if srcs == None:
         srcs = native.glob(["**/*.py", "**/*.pyi"])
     if data == None:
@@ -51,21 +57,21 @@ def python_library(
     sources = _extract_sources(srcs)
 
     black_test(
-        name="{}_black".format(name),
+        name=make_name("black"),
         srcs=sources.sources + sources.test_sources,
         pyproject=pyproject,
         **kwargs,
     )
 
     isort_test(
-        name="{}_isort".format(name),
+        name=make_name("isort"),
         srcs=sources.sources + sources.test_sources,
         deps=deps + test_deps,
         pyproject=pyproject,
     )
 
     native.py_library(
-        name=name,
+        name=make_name("lib"),
         srcs=sources.sources,
         data=data + sources.stubs,
         deps=deps,
@@ -74,12 +80,12 @@ def python_library(
     )
 
     # We can replace deps to point at library above (existing ones become transitive):
-    test_deps.append(":{}".format(name))
+    test_deps.append(make_name("lib"))
 
 
     if sources.test_sources:
         native.py_library(  # This ensures test files are detected by formatter
-            name="{}_test".format(name),
+            name=make_name("test"),
             srcs=sources.test_sources,
             data=test_data + sources.test_stubs,
             deps=test_deps,
@@ -88,7 +94,7 @@ def python_library(
         )
 
     mypy_test(
-        name="{}_typecheck_srcs".format(name),
+        name=make_name("typecheck.lib"),
         srcs=sources.sources,# + sources.stubs,
         imports=imports,
         deps=test_deps,
@@ -96,7 +102,7 @@ def python_library(
     )
 
     pylint_test(
-        name="{}_pylint_srcs".format(name),
+        name=make_name("pylint.lib"),
         srcs=sources.sources,
         deps=deps,
         pylintrc=Label("//tools/library/config:sources.pylintrc"),
@@ -107,7 +113,7 @@ def python_library(
         return
 
     mypy_test(
-        name="{}_typecheck_tests".format(name),
+        name=make_name("typecheck.tests"),
         srcs=sources.test_sources + sources.test_stubs,
         imports=imports,
         deps=test_deps,
@@ -116,7 +122,7 @@ def python_library(
     )
 
     pylint_test(
-        name="{}_pylint_tests".format(name),
+        name=make_name("pylint.tests"),
         srcs=sources.test_sources,
         deps=test_deps,
         pylintrc=Label("//tools/library/config:tests.pylintrc"),
@@ -124,7 +130,7 @@ def python_library(
     )
 
     pytest_test(
-        name="{}_pytest_tests".format(name),
+        name=make_name("pytest"),
         srcs=sources.test_sources,
         imports=imports,
         data=test_data,

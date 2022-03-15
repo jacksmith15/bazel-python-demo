@@ -3,10 +3,9 @@ load("//tools/library:defs.bzl", "python_library")
 
 
 python_library(
-    name="api",
     deps=[
-        "//src/users/content_type:content_type",
-        "//src/core/api:api",
+        "//src/users/content_type:lib",
+        "//src/core/api:lib",
         requirement("uvicorn"),
     ],
     test_deps=[
