@@ -1,1 +1,10 @@
+# Necessary for some bazel functionality:
+common --java_runtime_version=remotejdk_11
+
+# Test configuration:
 test --test_output=errors
+
+# Coverage-related configuration:
+coverage --combined_report=lcov
+test --instrumentation_filter="^//src[/:]"
+test --collect_code_coverage

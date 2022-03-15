@@ -21,6 +21,7 @@ astroid = "==2.9.0"
 uvicorn = "~=0.17.5"
 pytest-asyncio = "==0.18.2"
 pytest-docker = "==0.10.3"
+coverage = "~=6.3"
 
 [dev-packages]
 

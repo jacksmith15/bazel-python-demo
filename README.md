@@ -69,12 +69,25 @@ You can also just output the formatted diff without changing any files:
 ./format.sh --diff
 ```
 
+## Checking test coverage
+
+Test coverage is automatically generated when running `bazel test`, and combined into and lcov report under `bazel-out/_coverage`.
+
+To generate an HTML coverage report, run:
+
+```bash
+./coverage.sh
+```
+
+> :information_source: This requires that [lcov](https://github.com/linux-test-project/lcov) is installed.
+>   Install with e.g. `brew install lcov` or `apt install lcov`
 
 ## TODOS
 
 - `pydocstyle` etc.
-- Test coverage
+- Test coverage doesn't support branch coverage (limitation of `lcov` format in coverage-py).
 - IDE integration??? PYTHONPATH is all over the place.
+    + Just use the local venv, with PYTHONPATH=src
 - `PACKAGECLOUD_TOKEN` support (stamps? --define?)
 - Packaging support (i.e. publishing wheels, building and publishing docker images).
 - Running tests for multiple python versions?

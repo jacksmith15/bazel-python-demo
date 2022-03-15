@@ -14,8 +14,12 @@ def pytest_test(
     **kwargs
 ):
     # Create the test target:
-    if requirement("pytest") not in deps:
-        deps = deps + [requirement("pytest")]
+    for req in [
+        requirement("pytest"),
+        requirement("coverage")
+    ]:
+        if req not in deps:
+            deps.append(req)
     py_test(
         name=name,
         srcs=[
@@ -24,6 +28,9 @@ def pytest_test(
         + srcs,
         main="//tools/pytest:pytest_wrapper.py",
         args=[
+            # "--cov=src",
+            # "--cov-report='xml:coverage.xml'",
+            # "--cov-branch",
             # "--capture=no",
         ]
         + args
