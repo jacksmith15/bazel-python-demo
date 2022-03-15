@@ -73,6 +73,7 @@ You can also just output the formatted diff without changing any files:
 ## TODOS
 
 - `pydocstyle` etc.
+- Test coverage
 - IDE integration??? PYTHONPATH is all over the place.
 - `PACKAGECLOUD_TOKEN` support (stamps? --define?)
 - Packaging support (i.e. publishing wheels, building and publishing docker images).

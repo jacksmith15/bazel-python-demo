@@ -128,14 +128,17 @@ class Index:
         matches = await elasticsearch_client().indices.get(index=self.index_pattern)
         return list(matches.keys())
 
-    async def create_new_index(self) -> str:
-        """Creates a new index following the naming convention and returns its name.
-
-        Convention is {scope}.{content_name}.{index_type_indicator}.{time_specifier}.
-        Example:
-            gs2.en_recipes_v3.v.20190711t095000z
-        """
+    async def create_new_index(self, assign_aliases: bool = False) -> str:
+        """Creates a new index following the naming convention and returns its name."""
         timestamp = datetime.now().strftime("%Y%m%dt%H%M%Sz")
         index_name = f"{self._base_name}.v.{timestamp}"
-        await elasticsearch_client().indices.create(index=index_name)
+        client = elasticsearch_client()
+        await client.indices.create(index=index_name)
+        if assign_aliases:
+            await self.read_alias.assign(index_name)
+            await self.write_alias.assign(index_name)
+        await client.indices.refresh(index=index_name)
         return index_name
+
+    async def refresh(self) -> None:
+        await elasticsearch_client().indices.refresh(index=",".join([self.read_alias.name, self.write_alias.name]))

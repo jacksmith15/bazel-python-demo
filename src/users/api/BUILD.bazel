@@ -11,7 +11,11 @@ python_library(
     ],
     test_deps=[
         requirement("pytest"),
+        requirement("pytest-asyncio"),
+        requirement("pytest-docker"),
+        requirement("types-requests"),
     ],
+    test_data=["tests/docker-compose.yml"],
     imports=["../.."],
     visibility=["//visibility:public"],
 )

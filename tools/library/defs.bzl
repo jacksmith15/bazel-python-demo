@@ -76,6 +76,17 @@ def python_library(
     # We can replace deps to point at library above (existing ones become transitive):
     test_deps.append(":{}".format(name))
 
+
+    if sources.test_sources:
+        native.py_library(  # This ensures test files are detected by formatter
+            name="{}_test".format(name),
+            srcs=sources.test_sources,
+            data=test_data + sources.test_stubs,
+            deps=test_deps,
+            imports=imports,
+            **kwargs,
+        )
+
     mypy_test(
         name="{}_typecheck_srcs".format(name),
         srcs=sources.sources,# + sources.stubs,
@@ -113,7 +124,7 @@ def python_library(
     )
 
     pytest_test(
-        name="{}_tests".format(name),
+        name="{}_pytest_tests".format(name),
         srcs=sources.test_sources,
         imports=imports,
         data=test_data,

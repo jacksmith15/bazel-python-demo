@@ -28,6 +28,9 @@ line_length = 120
 [tool.pytest.ini_options]
 python_functions = "should_*"
 
+# pytest-asyncio settings
+asyncio_mode = "auto"
+
 # Structure: https://docs.pytest.org/en/stable/warnings.html
 # Values:    https://docs.python.org/3/library/warnings.html#describing-warning-filters
 #            action:message:category:module:line
@@ -45,5 +48,6 @@ follow_imports = "silent"
 [[tool.mypy.overrides]]
 module = [
     "uvicorn.*",
+    "pytest_docker.*",
 ]
 ignore_missing_imports = true
