@@ -3,6 +3,7 @@ load("//tools/mypy:defs.bzl", "mypy_test")
 load("//tools/black:defs.bzl", "black_test")
 load("//tools/isort:defs.bzl", "isort_test")
 load("//tools/pylint:defs.bzl", "pylint_test")
+load("//tools/docker:rules.bzl", "python_image")
 
 
 def python_library(
@@ -14,6 +15,7 @@ def python_library(
     test_deps=[],
     imports=[],
     pyproject="//:pyproject.toml",
+    image=False,
     **kwargs
 ):
     """A macro for declaring a python library, complete with tests and typechecking.
@@ -44,6 +46,9 @@ def python_library(
 
     The names for resulting targets are auto-generated. To create multiple in the same BUILD file,
     you can provide the `name` argument, which will be used as a prefix for target names.
+
+    To build a docker image, either pass `image=True` or `image=kwargs`, where kwargs are passed
+    directly to `python_image`.
     """
     def make_name(subname):
         prefix = "{}.".format(name) if name else ""
@@ -78,6 +83,18 @@ def python_library(
         imports=imports,
         **kwargs
     )
+
+    if image or image == {}:
+        if type(image) != dict:
+            image = {}  # So that we can '.get' optional properties
+        python_image(
+            name=make_name("image"),
+            srcs=sources.sources,
+            data=data,
+            deps=deps,
+            imports=imports,
+            main=image.get("main", "__main__.py"),
+        )
 
     # We can replace deps to point at library above (existing ones become transitive):
     test_deps.append(make_name("lib"))

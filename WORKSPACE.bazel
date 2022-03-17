@@ -7,9 +7,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 # Python rules:
 http_archive(
     name="rules_python",
-    sha256="15f84594af9da06750ceb878abbf129241421e3abbd6e36893041188db67f2fb",
-    strip_prefix="rules_python-0.7.0",
-    url="https://github.com/bazelbuild/rules_python/archive/refs/tags/0.7.0.tar.gz",
+    sha256="9fcf91dbcc31fde6d1edb15f117246d912c33c36f44cf681976bd886538deba6",
+    strip_prefix="rules_python-0.8.0",
+    url="https://github.com/bazelbuild/rules_python/archive/refs/tags/0.8.0.tar.gz",
 )
 
 
@@ -20,7 +20,7 @@ python_register_toolchains(
     # Available versions are listed in @rules_python//python:versions.bzl.
     python_version="3.10.2",
 )
-load("@python_resolved_interpreter//:defs.bzl", "interpreter")
+load("@python//:defs.bzl", "interpreter")
 
 
 # Create a central repo that knows about the dependencies needed from Pipfile.lock
@@ -47,3 +47,28 @@ http_archive(
     ],
     sha256="af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a903de",
 )
+
+
+# Docker rules:
+http_archive(
+    name="io_bazel_rules_docker",
+    sha256="85ffff62a4c22a74dbd98d05da6cf40f497344b3dbf1e1ab0a37ab2a1a6ca014",
+    strip_prefix="rules_docker-0.23.0",
+    urls=["https://github.com/bazelbuild/rules_docker/releases/download/v0.23.0/rules_docker-v0.23.0.tar.gz"],
+)
+
+# load("@io_bazel_rules_docker//toolchains/docker:toolchain.bzl", docker_toolchain_configure="toolchain_configure")
+# docker_toolchain_configure(name="docker_config")
+
+load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories="repositories")
+container_repositories()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps="deps")
+container_deps(go_repository_default_config="@//:WORKSPACE.bazel")
+
+
+load("//tools/docker:repositories.bzl", local_container_repositories="repositories")
+local_container_repositories()
+
+# load("@io_bazel_rules_docker//python:image.bzl", docker_python_repositories="repositories")
+# docker_python_repositories()

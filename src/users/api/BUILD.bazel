@@ -17,4 +17,5 @@ python_library(
     test_data=["tests/docker-compose.yml"],
     imports=["../.."],
     visibility=["//visibility:public"],
+    image=True,
 )

@@ -82,6 +82,14 @@ To generate an HTML coverage report, run:
 > :information_source: This requires that [lcov](https://github.com/linux-test-project/lcov) is installed.
 >   Install with e.g. `brew install lcov` or `apt install lcov`
 
+## Running containers
+
+`python_library` targets with `image=True` build docker images which can be executed. This can be run with:
+
+```bash
+bazel run //src/directory:image -- -p 8080:80 -- arg0 arg1
+```
+
 ## TODOS
 
 - `pydocstyle` etc.
