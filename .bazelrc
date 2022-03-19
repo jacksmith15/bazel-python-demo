@@ -1,6 +1,9 @@
 # Necessary for some bazel functionality:
 build --java_runtime_version=remotejdk_11
 
+# Stamping
+build --workspace_status_command=$PWD/stamp.sh
+
 # Test configuration:
 test --test_output=errors
 

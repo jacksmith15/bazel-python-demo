@@ -82,13 +82,37 @@ To generate an HTML coverage report, run:
 > :information_source: This requires that [lcov](https://github.com/linux-test-project/lcov) is installed.
 >   Install with e.g. `brew install lcov` or `apt install lcov`
 
-## Running containers
 
-`python_library` targets with `image=True` build docker images which can be executed. This can be run with:
+## Docker images
+
+If a `python_library` target has `image_repository` set, then it will build a docker image.
+
+### Publishing
+
+Docker images can be published using:
+
+```bash
+./publish.sh
+```
+
+You can also publish a subset of images by providing a query, for example:
+
+```bash
+./publish.sh //src/users/...
+```
+
+> :information_source: The target repository is set on the rule. The target registry and tags are controlled by [workspace status](https://docs.bazel.build/versions/main/user-manual.html#workspace_status), specifically the values provided in [stamp.sh](./stamp.sh).
+> The images are published as `{STABLE_IMAGE_REGISTRY}/{repository}:{STABLE_GIT_BRANCH}-{GIT_COMMIT_DATE}-{SHORT_GIT_SHA}`.
+> `STABLE_IMAGE_REGISTRY` is set to `localhost:5005` - you can create a registry on that port by following the instructions in [infra/](./infra).
+
+### Running
+
+You can also just run an image using:
 
 ```bash
 bazel run //src/directory:image -- -p 8080:80 -- arg0 arg1
 ```
+
 
 ## TODOS
 

@@ -15,7 +15,7 @@ def python_library(
     test_deps=[],
     imports=[],
     pyproject="//:pyproject.toml",
-    image=False,
+    image_repository=None,
     **kwargs
 ):
     """A macro for declaring a python library, complete with tests and typechecking.
@@ -84,16 +84,18 @@ def python_library(
         **kwargs
     )
 
-    if image or image == {}:
-        if type(image) != dict:
-            image = {}  # So that we can '.get' optional properties
+    if image_repository:
+        if "__main__.py" not in sources.sources:
+            fail("Cannot specify 'image_repository' if the sources do not include a '__main__.py' entry point.")
         python_image(
             name=make_name("image"),
+            repository=image_repository,
             srcs=sources.sources,
             data=data,
             deps=deps,
             imports=imports,
-            main=image.get("main", "__main__.py"),
+            main="__main__.py",
+            visibility=kwargs.get("visibility"),
         )
 
     # We can replace deps to point at library above (existing ones become transitive):
