@@ -1,0 +1,2 @@
+pypi.cluster.local
+api.cluster.local

@@ -1,0 +1,27 @@
+# ---
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: pypi-packages-pv
+# spec:
+#   storageClassName: ""
+#   capacity:
+#     storage: 500Mi
+#   accessModes:
+#     - ReadWriteOnce
+#   local:
+#     path: "/home/jack/scraps/pypi-packages".  # /path/to/packages in host node
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: pypi-packages-pvc
+#   namespace: pypi
+# spec:
+#   storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
+#   volumeName: pypi-packages-pv
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 400Mi

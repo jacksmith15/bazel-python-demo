@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: user-api
+  namespace: user-api
+  labels:
+    component: user-api
+spec:
+  type: NodePort
+  ports:
+  - name: user-api
+    port: 8096
+    targetPort: 8096
+  selector:
+    component: user-api

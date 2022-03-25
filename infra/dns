@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o errtrace
+set -o nounset
+set -o pipefail
+
+target="/etc/hosts"
+backup="${target}.$(date '+%s').bak"
+
+header='# START PATCHED HOSTS'
+footer='# END PATCHED HOSTS'
+
+hosts_txt="$(git rev-parse --show-toplevel)/infra/hosts/hosts.txt"
+hosts="
+127.0.0.1 localhost $(cat $hosts_txt | tr '\n' ' ')
+"
+
+
+patch_hosts() {
+    cp $target $backup
+    echo "Made back-up of ${target} at ${backup}"
+    echo $header >> $target
+    echo $hosts >> $target
+    echo $footer >> $target
+    echo "Successfully patched ${target}"
+}
+
+unpatch_hosts() {
+    if [[ -f "$backup" ]]
+    then
+        echo "Restoring ${target} from ${backup}"
+        cp $backup $target
+        rm $backup
+    fi
+}
+
+
+trap "unpatch_hosts" EXIT
+
+patch_hosts
+
+# Wait until interrupted
+echo "Press Ctrl+C to stop patching hosts"
+while true
+do
+    sleep 10
+done

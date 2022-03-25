@@ -6,17 +6,27 @@ Requires [kind](https://kind.sigs.k8s.io/docs/user/quick-start/) and [ctlptl](ht
 
 ## Usage
 
-Create the cluster:
+#### Create the cluster and associated resources:
 
 ```bash
-ctlptl apply -f cluster.yaml
+infra/up
 ```
 
-This creates a Kubernetes cluster and image registry. The image registry is available at localhost:5005, and can be pushed to by the Bazel build steps.
+This will create an image registry (at `localhost:5005`) and a kubernetes cluster with a number of resources.
+
+> :memo: You can also re-run this to propagate any changes to the `kustomize/` directory.
 
 
-Finally, to tear down the cluster:
+#### Patch `/etc/hosts` file for ease of testing (this will be reverted when you interrupt it):
 
 ```bash
-ctlptl delete -f cluster.yaml
+sudo infra/dns
+```
+
+> :information_source: Whilst `infra/dns` is running, you can access resources in the cluster via hostname. Try opening http://pypi.cluster.local in your browser.
+
+#### Tear down the infra:
+
+```bash
+infra/down
 ```
