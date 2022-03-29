@@ -14,8 +14,16 @@ infra/up
 
 This will create an image registry (at `localhost:5005`) and a kubernetes cluster with a number of resources.
 
-> :memo: You can also re-run this to propagate any changes to the `kustomize/` directory.
+> :memo: You can also re-run this to propagate any changes to the `cluster/kustomize/` directory.
 
+
+#### Deploy applications built by Bazel
+
+```bash
+bazel build //...  # Run the build
+./publish.sh  # Publish the images
+infra/deploy  # Deploy the apps with the latest images
+```
 
 #### Patch `/etc/hosts` file for ease of testing (this will be reverted when you interrupt it):
 

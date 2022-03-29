@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o errtrace
+set -o nounset
+set -o pipefail
+
+
+> /tmp/out
+> /tmp/err
+
+error_handler() {
+    exit_code="$?"
+    echo -e "\n\nERROR:\n"
+    cat /tmp/out
+    cat /tmp/err >&2
+    exit $exit_code
+}
+
+trap "error_handler" ERR
+
+rw="\r\e[0K"
+
+
+# Find root directory
+root="$(git rev-parse --show-toplevel)/infra"
+apps_root="${root}/apps"
+
+# Set latest tag for each image:
+export USER_API_TAG=$(curl -s http://localhost:5005/v2/bazel-test/users/api/tags/list | jq -r '.tags | sort | reverse | .[0]')
+
+
+wait_for_pods() {
+  echo -n "  waiting for pods to be ready"
+  while [ $(kubectl get pods --all-namespaces -o json | jq '.items | map(select(.status.phase=="Running" | not)) | map(select(.status.phase=="Succeeded" | not)) | length') -gt 0 ]
+  do
+    printf "."
+    sleep 1
+  done
+  echo -e "${rw}  pods are ready ✅"
+}
+
+
+apply_manifests() {
+    echo "Manifests:"
+
+    echo -n "  building..."
+    kustomize build $apps_root | envsubst > "${apps_root}/manifests.yaml" 2>> /tmp/err
+    echo -e "${rw}  built ✅"
+
+    echo -n "  validating..."
+    kubectl apply -f "${apps_root}/manifests.yaml" --dry-run=client --validate >> /tmp/out 2>> /tmp/err
+    echo -e "${rw}  validated ✅"
+
+    echo -n "  applying..."
+    kubectl apply -f "${apps_root}/manifests.yaml" >> /tmp/out 2>> /tmp/err
+    echo -e "${rw}  applied ✅"
+
+    wait_for_pods
+}
+
+
+apply_manifests

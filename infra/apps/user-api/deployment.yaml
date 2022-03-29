@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: user-api
-        image: localhost:5005/bazel-test/users/api:main-1648054554-484bd33
+        image: localhost:5005/bazel-test/users/api:${USER_API_TAG}
         imagePullPolicy: Always
         ports:
         - containerPort: 8096
