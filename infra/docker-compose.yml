@@ -9,7 +9,7 @@ services:
 
   pypi:
     image: pypiserver/pypiserver:v1.4.2
-    command: ["--passwords", ".htpasswd", "--authenticate", "update,download,list"]
+    command: ["--passwords", ".htpasswd", "--authenticate", "update"]
     ports:
       - 6006:8080
     volumes:

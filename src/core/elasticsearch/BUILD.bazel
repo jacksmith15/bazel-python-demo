@@ -1,5 +1,5 @@
 load("@python_deps//:requirements.bzl", "requirement")
-load("//tools/library:defs.bzl", "python_library")
+load("//tools/library:defs.bzl", "python_library", "wheel")
 
 
 python_library(
@@ -13,4 +13,9 @@ python_library(
     ],
     imports=["../.."],
     visibility=["//visibility:public"],
+    version="0.1.0",
+    wheel=wheel(
+        name="core.elasticsearch",
+        requires=["elasticsearch>=7.16,<8", "pydantic>=1.9,<2"],
+    )
 )
