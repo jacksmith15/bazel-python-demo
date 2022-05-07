@@ -1,0 +1,19 @@
+load("@python_deps//:requirements.bzl", "requirement")
+
+exports_files(
+    [
+        "twine_wrapper.py",
+    ]
+)
+
+
+py_binary(
+    name="twine",
+    srcs=["twine_wrapper.py"],
+    main="twine_wrapper.py",
+    deps=[
+        requirement("twine"),
+    ],
+    visibility=["//visibility:public"],
+    python_version="PY3",
+)

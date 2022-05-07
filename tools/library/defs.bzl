@@ -4,6 +4,7 @@ load("//tools/black:defs.bzl", "black_test")
 load("//tools/isort:defs.bzl", "isort_test")
 load("//tools/pylint:defs.bzl", "pylint_test")
 load("//tools/docker:rules.bzl", "python_image")
+load("//tools/wheel:defs.bzl", "python_wheel")
 
 
 def python_library(
@@ -16,6 +17,9 @@ def python_library(
     imports=[],
     pyproject="//:pyproject.toml",
     image_repository=None,
+    wheel_name=None,
+    description=None,
+    version=None,
     **kwargs
 ):
     """A macro for declaring a python library, complete with tests and typechecking.
@@ -98,6 +102,18 @@ def python_library(
             visibility=kwargs.get("visibility"),
         )
 
+    if wheel_name:
+        if not version:
+            fail("Must specify a version for wheel-packaged targets.")
+
+        python_wheel(
+            name=make_name("wheel"),
+            wheel_name=wheel_name,
+            version=version,
+            description=description,
+            libs=[make_name("lib")],
+        )
+
     # We can replace deps to point at library above (existing ones become transitive):
     test_deps.append(make_name("lib"))
 
@@ -109,6 +125,7 @@ def python_library(
             data=test_data + sources.test_stubs,
             deps=test_deps,
             imports=imports,
+            # requires=[],  # TODO: detect 3rd party requirements from deps
             **kwargs,
         )
 

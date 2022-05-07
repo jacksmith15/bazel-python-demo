@@ -103,7 +103,7 @@ You can also publish a subset of images by providing a query, for example:
 
 > :information_source: The target repository is set on the rule. The target registry and tags are controlled by [workspace status](https://docs.bazel.build/versions/main/user-manual.html#workspace_status), specifically the values provided in [stamp.sh](./stamp.sh).
 > The images are published as `{STABLE_IMAGE_REGISTRY}/{repository}:{STABLE_GIT_BRANCH}-{GIT_COMMIT_DATE}-{SHORT_GIT_SHA}`.
-> `STABLE_IMAGE_REGISTRY` is set to `localhost:5005` - you can create a registry on that port by following the instructions in [infra/](./infra).
+> `STABLE_IMAGE_REGISTRY` is set to `localhost:5000` - you can create a registry on that port by following the instructions in [infra/](./infra).
 
 ### Running
 

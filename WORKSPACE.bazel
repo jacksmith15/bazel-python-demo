@@ -57,9 +57,6 @@ http_archive(
     urls=["https://github.com/bazelbuild/rules_docker/releases/download/v0.23.0/rules_docker-v0.23.0.tar.gz"],
 )
 
-# load("@io_bazel_rules_docker//toolchains/docker:toolchain.bzl", docker_toolchain_configure="toolchain_configure")
-# docker_toolchain_configure(name="docker_config")
-
 load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories="repositories")
 container_repositories()
 
@@ -70,5 +67,14 @@ container_deps(go_repository_default_config="@//:WORKSPACE.bazel")
 load("//tools/docker:repositories.bzl", local_container_repositories="repositories")
 local_container_repositories()
 
-# load("@io_bazel_rules_docker//python:image.bzl", docker_python_repositories="repositories")
-# docker_python_repositories()
+
+# Inject secrets as environment variables:
+load("//tools/environment:defs.bzl", "environment")
+environment(
+    name="secrets",
+    variables={
+        "PYPI_URL": "",
+        "PYPI_USERNAME": "",
+        "PYPI_PASSWORD": "",
+    }
+)

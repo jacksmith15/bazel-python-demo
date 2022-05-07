@@ -1,6 +1,6 @@
 load("@python_deps//:requirements.bzl", "requirement")
 load("//tools/library:defs.bzl", "python_library")
-
+load("//tools/wheel:defs.bzl", "wheel_publish")
 
 python_library(
     deps=[
@@ -12,4 +12,12 @@ python_library(
     ],
     imports=["../.."],  # Allow importing as `from core.logging import *`
     visibility=["//visibility:public"],
+    wheel_name="core.logging",
+    version="0.2.0",
+)
+
+
+wheel_publish(
+    name="wheel.publish",
+    wheel=":wheel",
 )
