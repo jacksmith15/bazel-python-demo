@@ -68,13 +68,14 @@ load("//tools/docker:repositories.bzl", local_container_repositories="repositori
 local_container_repositories()
 
 
-# Inject secrets as environment variables:
+# Make secrets available for build and publish. These should be set on the host.
 load("//tools/environment:defs.bzl", "environment")
 environment(
     name="secrets",
     variables={
-        "PYPI_URL": "",
-        "PYPI_USERNAME": "",
-        "PYPI_PASSWORD": "",
+        "PYPI_URL": "http://localhost:6006",
+        "PYPI_USERNAME": "admin",
+        "PYPI_PASSWORD": "password",
+        "IMAGE_REGISTRY": "localhost:5000",
     }
 )

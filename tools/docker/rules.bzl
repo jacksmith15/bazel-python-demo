@@ -1,5 +1,6 @@
 load("@io_bazel_rules_docker//lang:image.bzl", "app_layer")
 load("@io_bazel_rules_docker//container:push.bzl", "container_push")
+load("@secrets//:vars.bzl", "IMAGE_REGISTRY")
 
 
 def python_image(
@@ -46,7 +47,7 @@ def python_image(
         name="{}.publish".format(name),
         image=name,
         format="Docker",
-        registry="{STABLE_IMAGE_REGISTRY}",
+        registry=IMAGE_REGISTRY,
         repository=repository,
         tag="{STABLE_GIT_BRANCH}-{GIT_SERIAL_NUMBER}-{GIT_SHA}",
         stamp="@io_bazel_rules_docker//stamp:always",

@@ -114,7 +114,6 @@ wheel_publish = rule(
             executable=True,
             cfg="host",
         ),
-        "stamp": attr.bool(default=True),
     },
     executable=True,
 )
