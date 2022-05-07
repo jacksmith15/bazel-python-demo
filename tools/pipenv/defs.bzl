@@ -14,19 +14,7 @@ exports_files(["{}"])
 def _pipenv_lock_impl(rctx):
     python_interpreter = _resolve_python_interpreter(rctx)
 
-    # result = rctx.execute(
-    #     [python_interpreter, "--version"]
-    # )
-    # fail("{}\n{}".format(result.stdout, result.stderr))
-
     rctx.file("BUILD.bazel", _BUILD_FILE_CONTENTS)
-    # args = [
-    #     python_interpreter,
-    #     "pipenv_lock.py",
-    #     rctx.path(rctx.attr.pipfile),
-    #     rctx.path(rctx.attr.pipfile_lock),
-    #     _REQUIREMENTS_LOCK,
-    # ]
     result = rctx.execute(
         [python_interpreter, "-m", "tools.pipenv.pipenv_lock.pipenv_lock", rctx.path(rctx.attr.pipfile), rctx.path(rctx.attr.pipfile_lock), _REQUIREMENTS_LOCK],
         environment = {"PYTHONPATH": _construct_pypath(rctx)},

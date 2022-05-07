@@ -17,7 +17,7 @@ def python_library(
     imports=[],
     pyproject="//:pyproject.toml",
     image_repository=None,
-    wheel_name=None,
+    wheel=None,
     description=None,
     version=None,
     **kwargs
@@ -102,16 +102,19 @@ def python_library(
             visibility=kwargs.get("visibility"),
         )
 
-    if wheel_name:
+    if wheel:
         if not version:
             fail("Must specify a version for wheel-packaged targets.")
-
         python_wheel(
             name=make_name("wheel"),
-            wheel_name=wheel_name,
+            wheel_name=wheel.name,
             version=version,
             description=description,
             libs=[make_name("lib")],
+            requires=wheel.requires,
+            extra_requires=wheel.extra_requires,
+            entry_points=wheel.entry_points,
+            publish=wheel.publish,
         )
 
     # We can replace deps to point at library above (existing ones become transitive):
@@ -173,6 +176,23 @@ def python_library(
         deps=test_deps,
         pyproject=pyproject,
         **kwargs,
+    )
+
+
+def wheel(
+    name,
+    requires=[],
+    extra_requires={},
+    entry_points={},
+    publish=True,
+):
+    """Constructor for wheel options."""
+    return struct(
+        name=name,
+        requires=requires,
+        extra_requires=extra_requires,
+        entry_points=entry_points,
+        publish=publish,
     )
 
 

@@ -1,12 +1,22 @@
 # Bazel Test
 
-## Build everything:
+## Configuration
+
+The following environment variables are used to configure the build process, but all have safe defaults for local testing. These are:
+
+- `PYPI_URL` - URL of the PyPi server to push wheels to.
+- `PYPI_USERNAME` - username for authenticating with PyPi.
+- `PYPI_PASSWORD` - password for authenticating with PyPi.
+- `IMAGE_REGISTRY` - URL of the image registry to push docker images to.
+
+
+## Build everything
 
 ```
 bazel build //...:all
 ```
 
-## Test everything:
+## Test everything
 
 ```
 bazel test --test_output=errors //...:all
@@ -83,35 +93,61 @@ To generate an HTML coverage report, run:
 >   Install with e.g. `brew install lcov` or `apt install lcov`
 
 
-## Docker images
+## Packaging and publishing
 
-If a `python_library` target has `image_repository` set, then it will build a docker image.
+Two types of published artifacts are supported - docker images and wheels.
+
+### Docker images
+
+If a `python_library` target has an `image_repository` set, then an image will be built - e.g.
+
+```python
+python_library(
+    name="my_library",
+    ...,
+    image_repository="namespace/my-library",
+)
+```
+
+The resulting image will be tagged as `namespace/my-library:{GIT_BRANCH}-{GIT_SERIAL_NUMBER}-{GIT_SHA}`.
+
+> :info: The library must have a `__main__.py` file in its root namespace.
+
+### Python wheels
+
+To build a Python wheel, pass the `wheel` and `version` arguments to `python_library`, e.g.
+
+```python
+load("//tools/library:defs.bzl", "python_library", "wheel")
+
+python_library(
+    name="my_library",
+    ...,
+    version="0.1.0",
+    wheel=wheel(
+        name="my-library",
+        requires=["requests"],
+    )
+)
+```
+
+> :memo: Unfortunately wheel requirements are not automatically inferred from the `deps` argument, and need to be specified explicitly.
 
 ### Publishing
 
-Docker images can be published using:
+Both kinds of artifacts can be published using:
 
 ```bash
 ./publish.sh
 ```
 
-You can also publish a subset of images by providing a query, for example:
+You can also publish a subset of targets by providing a query, for example:
 
 ```bash
 ./publish.sh //src/users/...
 ```
 
-> :information_source: The target repository is set on the rule. The target registry and tags are controlled by [workspace status](https://docs.bazel.build/versions/main/user-manual.html#workspace_status), specifically the values provided in [stamp.sh](./stamp.sh).
-> The images are published as `{STABLE_IMAGE_REGISTRY}/{repository}:{STABLE_GIT_BRANCH}-{GIT_COMMIT_DATE}-{SHORT_GIT_SHA}`.
-> `STABLE_IMAGE_REGISTRY` is set to `localhost:5000` - you can create a registry on that port by following the instructions in [infra/](./infra).
-
-### Running
-
-You can also just run an image using:
-
-```bash
-bazel run //src/directory:image -- -p 8080:80 -- arg0 arg1
-```
+> :memo: The image registry and PyPi server are controlled via environment variables. The default values for this configuration will push to the local infrastructure found in [infra/](./infra).
 
 
 ## TODOS
@@ -120,7 +156,5 @@ bazel run //src/directory:image -- -p 8080:80 -- arg0 arg1
 - Test coverage doesn't support branch coverage (limitation of `lcov` format in coverage-py).
 - IDE integration??? PYTHONPATH is all over the place.
     + Just use the local venv, with PYTHONPATH=src
-- `PACKAGECLOUD_TOKEN` support (stamps? --define?)
-- Packaging support (i.e. publishing wheels, building and publishing docker images).
 - Running tests for multiple python versions?
 - Maybe remote caching?

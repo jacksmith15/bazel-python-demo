@@ -2,6 +2,19 @@ workspace(
     name="bazel-test",
 )
 
+# Make secrets available for build and publish. These should be set on the host.
+load("//tools/environment:defs.bzl", "environment")
+environment(
+    name="secrets",
+    variables={
+        "PYPI_URL": "http://localhost:6006",
+        "PYPI_USERNAME": "admin",
+        "PYPI_PASSWORD": "password",
+        "IMAGE_REGISTRY": "localhost:5000",
+    }
+)
+
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # Python rules:
@@ -66,16 +79,3 @@ container_deps(go_repository_default_config="@//:WORKSPACE.bazel")
 
 load("//tools/docker:repositories.bzl", local_container_repositories="repositories")
 local_container_repositories()
-
-
-# Make secrets available for build and publish. These should be set on the host.
-load("//tools/environment:defs.bzl", "environment")
-environment(
-    name="secrets",
-    variables={
-        "PYPI_URL": "http://localhost:6006",
-        "PYPI_USERNAME": "admin",
-        "PYPI_PASSWORD": "password",
-        "IMAGE_REGISTRY": "localhost:5000",
-    }
-)

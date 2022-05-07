@@ -11,7 +11,9 @@ def python_wheel(
     version,
     name="wheel",
     libs=[],
-    # requires=[],
+    requires=[],
+    extra_requires={},
+    entry_points={},
     description=None,
     author=_DEFAULT_ORG_AUTHOR,
     author_email=_DEFAULT_ORG_EMAIL,
@@ -23,6 +25,7 @@ def python_wheel(
     python_requires=">=3.10",
     stamp=0,
     strip_path_prefixes=["src/"],
+    publish=True,
     **kwargs,
 ):
     def make_name(subname):
@@ -38,12 +41,20 @@ def python_wheel(
         description_file=_make_description_file(make_name("description"), description),
         distribution=wheel_name,
         python_requires=python_requires,
-        # requires=requires,
+        requires=requires,
+        extra_requires=extra_requires,
+        entry_points=entry_points,
         stamp=stamp,
         version=version,
         strip_path_prefixes=strip_path_prefixes,
         **kwargs,
     )
+
+    if publish:
+        wheel_publish(
+            name=make_name("publish"),
+            wheel=name,
+        )
 
 
 def _make_description_file(name, description=None):
