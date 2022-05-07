@@ -1,5 +1,5 @@
 # Pylint rules specifically for tests.
-# This is a duplicate of the root .pylintrc file, with some rule changes to accommodate test code.
+# This is a duplicate of  sources.pylintrc file, with some rule changes to accommodate test code.
 
 
 [MASTER]

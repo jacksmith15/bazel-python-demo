@@ -1,5 +1,5 @@
 workspace(
-    name="bazel-test",
+    name="bazel-python-demo",
 )
 
 # Make secrets available for build and publish. These should be set on the host.

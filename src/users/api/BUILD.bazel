@@ -17,5 +17,5 @@ python_library(
     test_data=["tests/docker-compose.yml"],
     imports=["../.."],
     visibility=["//visibility:public"],
-    image_repository="bazel-test/users/api",
+    image_repository="bazel-python-demo/users/api",
 )
