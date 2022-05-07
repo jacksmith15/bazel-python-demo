@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  registry:
+    image: registry:2.8.1
+    ports:
+      - 5000:5000
+    volumes:
+      - ./data/registry:/var/lib/registry
+
+  pypi:
+    image: pypiserver/pypiserver:v1.4.2
+    command: ["--passwords", ".htpasswd", "--authenticate", "update,download,list"]
+    ports:
+      - 6006:8080
+    volumes:
+      - ./data/pypi/packages:/data/packages
+      - ./config/pypi/.htpasswd:/data/.htpasswd
