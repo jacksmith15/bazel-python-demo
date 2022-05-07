@@ -1,5 +1,5 @@
 load("@rules_python//python:pip.bzl", "pip_parse")
-load("//tools/pipenv:repositories.bzl", "pipenv_install_internal_dependencies", "all_requirements")
+load("//tools/python/pipenv:repositories.bzl", "pipenv_install_internal_dependencies", "all_requirements")
 
 _REQUIREMENTS_LOCK = "requirements-lock.txt"
 
@@ -16,7 +16,7 @@ def _pipenv_lock_impl(rctx):
 
     rctx.file("BUILD.bazel", _BUILD_FILE_CONTENTS)
     result = rctx.execute(
-        [python_interpreter, "-m", "tools.pipenv.pipenv_lock.pipenv_lock", rctx.path(rctx.attr.pipfile), rctx.path(rctx.attr.pipfile_lock), _REQUIREMENTS_LOCK],
+        [python_interpreter, "-m", "tools.python.pipenv.pipenv_lock.pipenv_lock", rctx.path(rctx.attr.pipfile), rctx.path(rctx.attr.pipfile_lock), _REQUIREMENTS_LOCK],
         environment = {"PYTHONPATH": _construct_pypath(rctx)},
     )
 
@@ -35,7 +35,7 @@ pipenv_lock = repository_rule(
             allow_single_file=True,
         ),
         "_lock_script": attr.label(
-            default="//tools/pipenv/pipenv_lock/pipenv_lock.py"
+            default="//tools/python/pipenv/pipenv_lock/pipenv_lock.py"
         )
     },
     doc="""Create a new repository containing a `requirements-lock.txt` generated from a Pipfile.lock.

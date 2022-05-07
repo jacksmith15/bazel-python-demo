@@ -38,7 +38,7 @@ load("@python//:defs.bzl", "interpreter")
 
 # Create a central repo that knows about the dependencies needed from Pipfile.lock
 # Each dependency will only be loaded if needed by a target.
-load("//tools/pipenv:defs.bzl", "pipenv_parse")
+load("//tools/python/pipenv:defs.bzl", "pipenv_parse")
 pipenv_parse(
     name="python_deps",
     pipfile="//:Pipfile",
@@ -77,5 +77,5 @@ load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps="deps")
 container_deps(go_repository_default_config="@//:WORKSPACE.bazel")
 
 
-load("//tools/docker:repositories.bzl", local_container_repositories="repositories")
+load("//tools/packaging/docker:repositories.bzl", local_container_repositories="repositories")
 local_container_repositories()

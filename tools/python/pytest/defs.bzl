@@ -1,5 +1,3 @@
-"""Wrap pytest"""
-
 load("@rules_python//python:defs.bzl", "py_test")
 load("@python_deps//:requirements.bzl", "requirement")
 
@@ -23,15 +21,12 @@ def pytest_test(
     py_test(
         name=name,
         srcs=[
-            "//tools/pytest:pytest_wrapper.py",
+            "//tools/python/pytest:pytest_wrapper.py",
         ]
         + srcs,
-        main="//tools/pytest:pytest_wrapper.py",
+        main="//tools/python/pytest:pytest_wrapper.py",
         args=[
-            # "--cov=src",
-            # "--cov-report='xml:coverage.xml'",
-            # "--cov-branch",
-            # "--capture=no",
+            # Default args go here.
         ]
         + args
         + ["$(location :%s)" % x for x in srcs],

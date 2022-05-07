@@ -84,12 +84,12 @@ format = aspect(
     attr_aspects=[],
     attrs={
         "_black": attr.label(
-            default=Label("//tools/black:black"),
+            default=Label("//tools/python/black:black"),
             executable=True,
             cfg="host",
         ),
         "_isort": attr.label(
-            default=Label("//tools/isort:isort"),
+            default=Label("//tools/python/isort:isort"),
             executable=True,
             cfg="host",
         ),

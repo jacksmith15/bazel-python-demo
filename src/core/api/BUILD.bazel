@@ -1,5 +1,5 @@
 load("@python_deps//:requirements.bzl", "requirement")
-load("//tools/library:defs.bzl", "python_library", "wheel")
+load("//tools/python/library:defs.bzl", "python_library", "wheel")
 
 
 python_library(

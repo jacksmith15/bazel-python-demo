@@ -121,7 +121,7 @@ wheel_publish = rule(
     attrs={
         "wheel": attr.label(mandatory=True, providers=[PyWheelInfo]),
         "_twine_cli": attr.label(
-            default=Label("//tools/twine:twine"),
+            default=Label("//tools/packaging/twine:twine"),
             executable=True,
             cfg="host",
         ),

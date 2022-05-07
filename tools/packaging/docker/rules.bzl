@@ -13,7 +13,7 @@ def python_image(
     **kwargs,
 ):
     binary_name = "{}.binary".format(name)
-    base = base or "//tools/docker:search_python_base"
+    base = base or "//tools/packaging/docker:default_python_base"
     native.py_binary(
         name=binary_name,
         **kwargs,

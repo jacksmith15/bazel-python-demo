@@ -1,8 +1,8 @@
 load("@io_bazel_rules_docker//container:image.bzl", "container_image")
-load("//tools/docker:repositories.bzl", "image")
+load("//tools/packaging/docker:repositories.bzl", "image")
 
 container_image(
-    name="search_python_base",
+    name="default_python_base",
     base=image("python_base"),
     env={
         "LC_ALL": "C.UTF-8",

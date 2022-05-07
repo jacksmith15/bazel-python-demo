@@ -118,12 +118,12 @@ mypy_test = rule(
             allow_single_file=True,
         ),
         "_mypy_cli": attr.label(
-            default=Label("//tools/mypy:mypy"),
+            default=Label("//tools/python/mypy:mypy"),
             executable=True,
             cfg="host",
         ),
         "_sitepkg_loader": attr.label(
-            default=Label("//tools/mypy:sitepkg_loader"),
+            default=Label("//tools/python/mypy:sitepkg_loader"),
             executable=True,
             cfg="host",
         )

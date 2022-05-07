@@ -2,33 +2,32 @@
 
 load("@rules_python//python:defs.bzl", "py_test")
 load("@python_deps//:requirements.bzl", "requirement")
+load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 
-def pylint_test(name, srcs, args=[], deps=[], pylintrc=None, **kwargs):
+def black_test(name, srcs, args=[], pyproject="//:pyproject.toml", **kwargs):
     # Create the test target:
-    if pylintrc:
-        args = args + ["--rcfile", "$(location {})".format(pylintrc)]
-    if requirement("pylint") not in deps:
-        deps = deps + [requirement("pylint")]
     py_test(
         name=name,
         srcs=[
-            "//tools/pylint:pylint_wrapper.py",
+            "//tools/python/black:black_wrapper.py",
         ]
         + srcs,
-        main="//tools/pylint:pylint_wrapper.py",
+        main="//tools/python/black:black_wrapper.py",
         args=[
             # Default args can go here
         ]
         + args
         + [
-            "--persistent=no",
-            # Required args can go here
+            "--workers=1",
+            "--check",
+            # Diff causes multiprocessing issues:
+            # "--diff",
         ]
         + ["$(location :%s)" % x for x in srcs],
         python_version="PY3",
         srcs_version="PY3",
-        deps=deps,
-        data=[pylintrc],
+        deps=[requirement("black")],
+        data=[pyproject],
         **kwargs,
     )

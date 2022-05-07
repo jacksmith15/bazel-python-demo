@@ -12,10 +12,10 @@ def isort_test(name, srcs, args=[], deps=[], pyproject="//:pyproject.toml", **kw
     py_test(
         name=name,
         srcs=[
-            "//tools/isort:isort_wrapper.py",
+            "//tools/python/isort:isort_wrapper.py",
         ]
         + srcs,
-        main="//tools/isort:isort_wrapper.py",
+        main="//tools/python/isort:isort_wrapper.py",
         args=[
             # Default args can go here
         ]

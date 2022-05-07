@@ -1,10 +1,10 @@
-load("//tools/pytest:defs.bzl", "pytest_test")
-load("//tools/mypy:defs.bzl", "mypy_test")
-load("//tools/black:defs.bzl", "black_test")
-load("//tools/isort:defs.bzl", "isort_test")
-load("//tools/pylint:defs.bzl", "pylint_test")
-load("//tools/docker:rules.bzl", "python_image")
-load("//tools/wheel:defs.bzl", "python_wheel")
+load("//tools/packaging/docker:rules.bzl", "python_image")
+load("//tools/packaging/wheel:defs.bzl", "python_wheel")
+load("//tools/python/black:defs.bzl", "black_test")
+load("//tools/python/isort:defs.bzl", "isort_test")
+load("//tools/python/mypy:defs.bzl", "mypy_test")
+load("//tools/python/pylint:defs.bzl", "pylint_test")
+load("//tools/python/pytest:defs.bzl", "pytest_test")
 
 
 def python_library(
@@ -28,7 +28,9 @@ def python_library(
 
     Usage:
 
-    ```
+    ```python
+    load("//tools/python/library:defs.bzl", "python_library")
+
     python_library(
         srcs=glob(["**/*.py", "**/*.pyi"]), # Omit this argument for sensible default behaviour
         data=[  # If not provided, collect sensible defaults if present e.g. `py.typed`
@@ -144,7 +146,7 @@ def python_library(
         name=make_name("pylint.lib"),
         srcs=sources.sources,
         deps=deps,
-        pylintrc=Label("//tools/library/config:sources.pylintrc"),
+        pylintrc=Label("//tools/python/library/config:sources.pylintrc"),
         imports=imports,
     )
 
@@ -164,7 +166,7 @@ def python_library(
         name=make_name("pylint.tests"),
         srcs=sources.test_sources,
         deps=test_deps,
-        pylintrc=Label("//tools/library/config:tests.pylintrc"),
+        pylintrc=Label("//tools/python/library/config:tests.pylintrc"),
         imports=imports,
     )
 
