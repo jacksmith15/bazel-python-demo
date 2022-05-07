@@ -1,5 +1,9 @@
 # Bazel Test
 
+## Set-up
+
+Install [Bazelisk](https://github.com/bazelbuild/bazelisk).
+
 ## Configuration
 
 The following environment variables are used to configure the build process, but all have safe defaults for local testing. These are:
