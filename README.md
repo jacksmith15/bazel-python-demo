@@ -9,17 +9,36 @@ The following environment variables are used to configure the build process, but
 - `PYPI_PASSWORD` - password for authenticating with PyPi.
 - `IMAGE_REGISTRY` - URL of the image registry to push docker images to.
 
+> :information_source: These variables and defaults are defined in [WORKSPACE.bazel](./WORKSPACE.bazel).
+
+## Quick demo
+
+Leave the environment variables above as default, then run the following:
+
+```bash
+# Bring up the local PyPi server and image registry:
+docker-compose -f infra/docker-compose.yml up -d
+
+# Build everything
+bazel build //...
+
+# Publish all targets
+./publish.sh
+```
+
+You can now view the published wheels at http://localhost:6006/simple and the published images at http://localhost:5000/v2/_catalog.
+
 
 ## Build everything
 
 ```
-bazel build //...:all
+bazel build //...
 ```
 
 ## Test everything
 
 ```
-bazel test --test_output=errors //...:all
+bazel test //...
 ```
 
 ## Add a new dependency
@@ -28,7 +47,7 @@ Run `pipenv install ...` as usual to add a dependency.
 
 A single `Pipfile` and `Pipfile.lock` pair contains the full set of dependencies for the workspace. The `Pipfile.lock` is automatically parsed by Bazel (see [tools/pipenv](./tools/pipenv)), and dependencies are automatically made available to targets based on their `deps`.
 
-There is no need to distinguish between dev and non-dev dependencies in the Pipfile - each target specifies its own dependencies, `pipenv` is simply used for convenience of transitive dependency resolution and exact locking etc.
+There is no need to distinguish between dev and non-dev dependencies in the Pipfile - each target specifies its own dependency groups, `pipenv` is simply used for convenience of transitive dependency resolution and exact locking etc.
 
 
 ## Adding a new Python library
@@ -111,7 +130,7 @@ python_library(
 
 The resulting image will be tagged as `namespace/my-library:{GIT_BRANCH}-{GIT_SERIAL_NUMBER}-{GIT_SHA}`.
 
-> :info: The library must have a `__main__.py` file in its root namespace.
+> :information_source: The library must have a `__main__.py` file in its root namespace.
 
 ### Python wheels
 
