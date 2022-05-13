@@ -1,9 +1,6 @@
 # Test reports
 reports/
 
-# User .env file
-.env
-
 # IDEs
 .idea
 *.sublime-*

@@ -92,7 +92,7 @@ python_library(
         requirement("pytest"),
         requirement("types-requests"),
     ],
-    imports=["../.."],
+    imports=["../.."],  # This should always be the relative path to the src/ directory.
     visibility=["//visibility:public"],
 )
 ```
@@ -189,12 +189,37 @@ You can also publish a subset of targets by providing a query, for example:
 
 > :memo: The image registry and PyPi server are controlled via environment variables. The default values for this configuration will push to the local infrastructure found in [infra/](./infra).
 
+## Interpreter/IDE integration
+
+Since Bazel runs everything in sandboxes it is difficult to get direct integration with IDEs. However it is possible to approximate this by creating a root virtual environment containing the superset of all dependencies:
+
+1. Create a local virtual environment with the superset of dependencies installed:
+  ```bash
+  pipenv sync
+  ```
+2. Run a Python interpreter inside this virtual environment:
+  ```bash
+  pipenv run python
+  ```
+3. You should now have access to the modules under `src/`:
+  ```
+  >>> from core.logging import logger
+  >>> from users.content_type import User
+  ```
+
+Since the virtual environment contains all of the tooling dependencies too, it should be possible to hook most IDEs up to this for the purposes of linting, code analysis etc.
+
+### Constraints
+
+This approach is not perfect, and there are a few drawbacks:
+
+- The virtual environment contains all dependencies, so you may find something works in your venv but fails when built with Bazel. Usually this will be because the target in question doesn't declare explicitly depend on a package you require.
+- This only works if all Python packages set their root import to the `src/` directory - otherwise the import paths will differ when built.
+
 
 ## TODOS
 
 - `pydocstyle` etc.
 - Test coverage doesn't support branch coverage (limitation of `lcov` format in coverage-py).
-- IDE integration??? PYTHONPATH is all over the place.
-    + Just use the local venv, with PYTHONPATH=src
 - Running tests for multiple python versions?
 - Maybe remote caching?
