@@ -18,7 +18,7 @@ Install [Bazelisk](https://github.com/bazelbuild/bazelisk).
 
 ## Configuration
 
-The following environment variables are used to configure the build process, but all have safe defaults for local testing. These are:
+The following environment variables are used to configure the build process, **but all have safe defaults for local testing**. These are:
 
 - `PYPI_URL` - URL of the PyPi server to push wheels to.
 - `PYPI_USERNAME` - username for authenticating with PyPi.
