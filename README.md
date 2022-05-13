@@ -1,4 +1,16 @@
-# Bazel Test
+# Bazel Python Demo
+
+A modern Python development set-up for Bazel. The purpose of the repo is to demonstrate the integration of a range of common Python development tools into a Bazel workflow, wrapped behind a simple but opinionated set of rules.
+
+## Features
+
+- Dependency management using [pipenv](https://pipenv.pypa.io/en/latest/)
+- Code formatting using [black](https://github.com/psf/black) and [isort](https://pycqa.github.io/isort/)
+- Linting and static analysis using [pylint](https://pylint.pycqa.org/en/latest/) and [mypy](https://mypy.readthedocs.io/en/stable/)
+- Tests and code coverage using [pytest](https://docs.pytest.org/en/7.1.x/), [coveragepy](https://coverage.readthedocs.io/en/6.3.3/) and [lcov](http://ltp.sourceforge.net/coverage/lcov.php)
+- Packaging and publishing Docker images and Python wheels
+- Configuration via environment variables
+- Succinct and opinionated macros for ease of developer use
 
 ## Set-up
 
