@@ -121,7 +121,7 @@ You can also just output the formatted diff without changing any files:
 
 ## Checking test coverage
 
-Test coverage is automatically generated when running `bazel test`, and combined into and lcov report under `bazel-out/_coverage`.
+Test coverage is automatically generated when running `bazel test`, and combined into an lcov report under `bazel-out/_coverage`.
 
 To generate an HTML coverage report, run:
 
