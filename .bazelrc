@@ -1,6 +1,9 @@
 # Necessary for some bazel functionality:
 build --java_runtime_version=remotejdk_11
 
+# Required for docker_rules to work on Mac
+build:macos --@io_bazel_rules_docker//transitions:enable=false
+
 # Stamping
 build --workspace_status_command=$PWD/stamp.sh
 
