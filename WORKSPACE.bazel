@@ -10,7 +10,7 @@ environment(
         "PYPI_URL": "http://localhost:6006",
         "PYPI_USERNAME": "admin",
         "PYPI_PASSWORD": "password",
-        "IMAGE_REGISTRY": "localhost:5000",
+        "IMAGE_REGISTRY": "localhost:15000",
     },
 )
 

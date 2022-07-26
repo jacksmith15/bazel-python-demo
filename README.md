@@ -42,7 +42,7 @@ bazel build //...
 ./publish.sh
 ```
 
-You can now view the published wheels at http://localhost:6006/simple and the published images at http://localhost:5000/v2/_catalog.
+You can now view the published wheels at http://localhost:6006/simple and the published images at http://localhost:15000/v2/_catalog.
 
 You can also try installing a published library with dependencies:
 

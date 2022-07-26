@@ -3,7 +3,7 @@ services:
   registry:
     image: registry:2.8.1
     ports:
-      - 5000:5000
+      - 15000:5000
     volumes:
       - ./data/registry:/var/lib/registry
 

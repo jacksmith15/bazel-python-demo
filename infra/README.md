@@ -8,6 +8,6 @@ Bring up the infra:
 docker-compose up -d
 ```
 
-This will expose an image registry at http://localhost:5000, and a PyPi server at http://localhost:6006.
+This will expose an image registry at http://localhost:15000, and a PyPi server at http://localhost:6006.
 
 The credentials for the local PyPi server are `admin` and `password`.
