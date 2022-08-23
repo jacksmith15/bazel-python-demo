@@ -10,14 +10,23 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      - restore_cache:
+          keys:
+            - '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
+            - '{{ checksum ".circleci/config.yml" }}-main'
+      - run:
+          name: Configure path
+          command: |
+            mkdir -p bin
+            echo 'export PATH="${CIRCLE_WORKING_DIRECTORY}/bin:${PATH}"' >> $BASH_ENV
       - run:
           name: Install Bazel
           command: |
-            mkdir bin
-            curl -sfSL -o bin/bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
-            echo "${BAZEL_SHA}  bin/bazel" | sha256sum -c
-            chmod u+x bin/bazel
-            echo 'export PATH="${CIRCLE_WORKING_DIRECTORY}/bin:${PATH}"' >> $BASH_ENV
+            if [ ! -f bin/bazel ]; then
+              curl -sfSL -o bin/bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
+              echo "${BAZEL_SHA}  bin/bazel" | sha256sum -c
+              chmod u+x bin/bazel
+            fi
       - run:
           name: Print Bazel version
           command: |
@@ -25,11 +34,21 @@ jobs:
       - run:
           name: Build
           command: |
-            bazel build //...
+            bazel --disk_cache=~/.cache/bazel build //...
+      - save_cache:
+          key: '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
+          paths:
+            - "bin"
+            - "~/.cache/bazel"
       - run:
           name: Test
           command: |
-            bazel test //...
+            bazel --disk_cache=~/.cache/bazel test //...
+      - save_cache:
+          key: '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
+          paths:
+            - "bin"
+            - "~/.cache/bazel"
 
 workflows:
   version: 2
