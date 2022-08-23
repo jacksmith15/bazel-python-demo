@@ -13,8 +13,8 @@ jobs:
       - run:
           name: Install Bazel
           command: |
-            curl -sfSL -o /bin/bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
-            echo "${BAZEL_SHA}  /bin/bazel" | sha256sum -c
+            curl -sfSL -o bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
+            echo "${BAZEL_SHA}  bazel" | sha256sum -c
             chmod u+x ./bazel
             bazel version
 
