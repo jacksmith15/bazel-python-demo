@@ -22,6 +22,14 @@ jobs:
           name: Print Bazel version
           command: |
             bazel version
+      - run:
+          name: Build
+          command: |
+            bazel build //...
+      - run:
+          name: Test
+          command: |
+            bazel test //...
 
 workflows:
   version: 2
