@@ -189,6 +189,8 @@ You can also publish a subset of targets by providing a query, for example:
 
 > :memo: The image registry and PyPi server are controlled via environment variables. The default values for this configuration will push to the local infrastructure found in [infra/](./infra).
 
+> :memo: Authentication with image registries is controlled by the regular `DOCKER_CONFIG` variable (or its default `~/.docker/config.json`). This means users and CI can perform `docker login` commands before running the build and publish steps.
+
 ## Interpreter/IDE integration
 
 Since Bazel runs everything in sandboxes it is difficult to get direct integration with IDEs. However it is possible to approximate this by creating a root virtual environment containing the superset of all dependencies:
