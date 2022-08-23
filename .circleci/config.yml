@@ -13,10 +13,15 @@ jobs:
       - run:
           name: Install Bazel
           command: |
-            curl -sfSL -o bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
-            echo "${BAZEL_SHA}  bazel" | sha256sum -c
-            chmod u+x ./bazel
-            ./bazel version
+            mkdir bin
+            curl -sfSL -o bin/bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
+            echo "${BAZEL_SHA}  bin/bazel" | sha256sum -c
+            chmod u+x bin/bazel
+            echo 'export PATH="${CIRCLE_WORKING_DIRECTORY}/bin:${PATH}" >> $BASH_ENV
+      - run:
+          name: Print Bazel version
+          command: |
+            bazel version
 
 workflows:
   version: 2
