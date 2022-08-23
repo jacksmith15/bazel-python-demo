@@ -1,4 +1,11 @@
+#!/usr/bin/env bash
+
 # Publish all docker images
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
 filter=${1-"//..."}
 targets=$(bazel query 'attr("image", "", attr("registry", "", '$filter'))' 2> /dev/null)
 
