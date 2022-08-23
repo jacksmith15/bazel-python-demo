@@ -1,0 +1,26 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/base:2022.08
+        environment:
+          BAZEL_SHA: 399eedb225cff7a13f9f027f7ea2aad02ddb668a8eb89b1d975d222e4dc12ed9
+    working_directory: ~/project
+    steps:
+      - checkout:
+          path: ~/project
+      - run:
+          name: Install Bazel
+          command: |
+            curl -sfSL -o /bin/bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
+            echo "${BAZEL_SHA}  /bin/bazel" | sha256sum -c
+            chmod u+x ./bazel
+            bazel version
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - build:
+          name: build
