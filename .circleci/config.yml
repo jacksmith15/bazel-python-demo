@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Build
           command: |
-            bazel --disk_cache=~/.cache/bazel build //...
+            bazel build --disk_cache=~/.cache/bazel //...
       - save_cache:
           key: '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
           paths:
@@ -43,7 +43,7 @@ jobs:
       - run:
           name: Test
           command: |
-            bazel --disk_cache=~/.cache/bazel test //...
+            bazel test --disk_cache=~/.cache/bazel //...
       - save_cache:
           key: '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
           paths:
