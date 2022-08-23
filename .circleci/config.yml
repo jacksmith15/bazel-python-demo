@@ -16,7 +16,7 @@ jobs:
             curl -sfSL -o bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
             echo "${BAZEL_SHA}  bazel" | sha256sum -c
             chmod u+x ./bazel
-            bazel version
+            ./bazel version
 
 workflows:
   version: 2
