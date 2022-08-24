@@ -8,8 +8,6 @@ jobs:
         default: v1.12.2
     machine:
       image: ubuntu-2004:202111-01
-    environment:
-      BAZEL_SHA: 399eedb225cff7a13f9f027f7ea2aad02ddb668a8eb89b1d975d222e4dc12ed9
     working_directory: ~/project
     steps:
       - checkout:
@@ -25,9 +23,9 @@ jobs:
       - restore_cache:
           name: Restore build cache
           keys:
-            - '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}-{{ .BuildNum }}'
-            - '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
-            - '{{ checksum ".circleci/config.yml" }}-main'
+            - 'disk-cache-{{ .Branch }}-{{ .BuildNum }}'
+            - 'disk-cache-{{ .Branch }}'
+            - 'disk-cache-main'
       - run:
           name: Configure path
           command: |
@@ -41,7 +39,7 @@ jobs:
               chmod u+x ~/bin/bazel
             fi
       - save_cache:
-          name: Cache Bazelisk
+          name: Save Bazelisk
           key: bazelisk-<< parameters.bazelisk_version >>
           paths:
             - "~/bin/bazel"
@@ -50,7 +48,7 @@ jobs:
           command: |
             bazel version
       - save_cache:
-          name: Cache Bazel
+          name: Save Bazel
           key: bazel-{{ checksum ".bazelversion" }}
           paths:
             - ~/.cache/bazelisk
@@ -63,8 +61,8 @@ jobs:
           command: |
             bazel test --disk_cache=~/.cache/bazel-cache //...
       - save_cache:
-          name: Cache build cache
-          key: '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}-{{ .BuildNum }}'
+          name: Save disk cache
+          key: 'disk-cache-{{ .Branch }}-{{ .BuildNum }}'
           paths:
             - "~/.cache/bazel-cache"
 
