@@ -225,3 +225,4 @@ This approach is not perfect, and there are a few drawbacks:
 - Test coverage doesn't support branch coverage (limitation of `lcov` format in coverage-py).
 - Running tests for multiple python versions?
 - Remote caching #3
+- CircleCI caching strategy? Since the cache is immutable, its extremely hard to avoid massive storage usage.
