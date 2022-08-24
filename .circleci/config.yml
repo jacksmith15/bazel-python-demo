@@ -2,6 +2,10 @@ version: 2.1
 
 jobs:
   build:
+    parameters:
+      bazelisk_version:
+        type: string
+        default: v1.12.2
     machine:
       image: ubuntu-2004:202111-01
     environment:
@@ -11,44 +15,58 @@ jobs:
       - checkout:
           path: ~/project
       - restore_cache:
+          name: Restore Bazelisk
           keys:
+            - bazelisk-<< parameters.bazelisk_version >>
+      - restore_cache:
+          name: Restore Bazel
+          keys:
+            - bazel-{{ checksum ".bazelversion" }}
+      - restore_cache:
+          name: Restore build cache
+          keys:
+            - '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}-{{ .BuildNum }}'
             - '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
             - '{{ checksum ".circleci/config.yml" }}-main'
       - run:
           name: Configure path
           command: |
-            mkdir -p bin
-            echo 'export PATH="${CIRCLE_WORKING_DIRECTORY}/bin:${PATH}"' >> $BASH_ENV
+            mkdir -p ~/bin
+            echo 'export PATH="~/bin:${PATH}"' >> $BASH_ENV
       - run:
-          name: Install Bazel
+          name: Install Bazelisk
           command: |
-            if [ ! -f bin/bazel ]; then
-              curl -sfSL -o bin/bazel https://github.com/bazelbuild/bazel/releases/download/5.0.0/bazel-5.0.0-linux-x86_64
-              echo "${BAZEL_SHA}  bin/bazel" | sha256sum -c
-              chmod u+x bin/bazel
+            if [ ! -f ~/bin/bazel ]; then
+              curl -sfSL -o ~/bin/bazel https://github.com/bazelbuild/bazelisk/releases/download/<< parameters.bazelisk_version >>/bazelisk-linux-amd64
+              chmod u+x ~/bin/bazel
             fi
+      - save_cache:
+          name: Cache Bazelisk
+          key: bazelisk-<< parameters.bazelisk_version >>
+          paths:
+            - "~/bin/bazel"
       - run:
           name: Print Bazel version
           command: |
             bazel version
+      - save_cache:
+          name: Cache Bazel
+          key: bazel-{{ checksum ".bazelversion" }}
+          paths:
+            - ~/.cache/bazelisk
       - run:
           name: Build
           command: |
-            bazel build --disk_cache=~/.cache/bazel //...
-      - save_cache:
-          key: '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
-          paths:
-            - "bin"
-            - "~/.cache/bazel"
+            bazel build --disk_cache=~/.cache/bazel-cache //...
       - run:
           name: Test
           command: |
-            bazel test --disk_cache=~/.cache/bazel //...
+            bazel test --disk_cache=~/.cache/bazel-cache //...
       - save_cache:
-          key: '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}'
+          name: Cache build cache
+          key: '{{ checksum ".circleci/config.yml" }}-{{ .Branch }}-{{ .BuildNum }}'
           paths:
-            - "bin"
-            - "~/.cache/bazel"
+            - "~/.cache/bazel-cache"
 
 workflows:
   version: 2
