@@ -55,16 +55,17 @@ jobs:
       - run:
           name: Build
           command: |
-            bazel build --disk_cache=~/.cache/bazel-cache //...
+            bazel build --disk_cache=~/.cache/bazel-disk-cache --repository_cache=~/.cache/bazel-repository-cache //...
       - run:
           name: Test
           command: |
-            bazel test --disk_cache=~/.cache/bazel-cache //...
+            bazel test --disk_cache=~/.cache/bazel-disk-cache --repository_cache=~/.cache/bazel-repository-cache //...
       - save_cache:
           name: Save disk cache
           key: 'disk-cache-{{ .Branch }}-{{ .BuildNum }}'
           paths:
-            - "~/.cache/bazel-cache"
+            - "~/.cache/bazel-disk-cache"
+            - "~/.cache/bazel-repository-cache"
 
 workflows:
   version: 2
