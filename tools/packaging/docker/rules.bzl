@@ -1,4 +1,4 @@
-load("@io_bazel_rules_docker//lang:image.bzl", "app_layer")
+load("@io_bazel_rules_docker//lang:image.bzl", "app_layer", "filter_layer")
 load("@io_bazel_rules_docker//container:push.bzl", "container_push")
 load("@secrets//:vars.bzl", "IMAGE_REGISTRY")
 
@@ -18,7 +18,12 @@ def python_image(
         name=binary_name,
         **kwargs,
     )
-    for idx, dep in enumerate(kwargs.get("deps", [])):
+
+    external_deps_layer = "{}.layer.external".format(name)
+    filter_layer(name=external_deps_layer, dep=binary_name, filter="@")
+
+    deps = [external_deps_layer] + kwargs.get("deps", [])
+    for idx, dep in enumerate(deps):
         base = app_layer(
             name="{}.layer.{}".format(name, idx),
             base=base,
