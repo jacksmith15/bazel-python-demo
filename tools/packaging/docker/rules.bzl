@@ -16,6 +16,7 @@ def python_image(
     base = base or "//tools/packaging/docker:default_python_base"
     native.py_binary(
         name=binary_name,
+        exec_compatible_with=["@io_bazel_rules_docker//platforms:run_in_container"],
         **kwargs,
     )
 
