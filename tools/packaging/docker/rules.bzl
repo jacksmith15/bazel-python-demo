@@ -18,40 +18,30 @@ def python_image(
         name=binary_name,
         **kwargs,
     )
-    # TODO: I think Python itself is getting loaded in the final layer, which may
-    # explain why the final layer is 250MB :(
-    # There isn't actually any need to vendor python at all, its already in the image.
     for idx, dep in enumerate(kwargs.get("deps", [])):
-        if idx == (len(kwargs.get("deps", [])) - 1):
-            base = app_layer(
-                name=name,
-                base=base,
-                dep=dep,
-                entrypoint=entrypoint or ["/usr/local/bin/python"],
-                visibility=visibility,
-                tags=tags,
-                args=kwargs.get("args"),
-                data=kwargs.get("data"),
-                create_empty_workspace_dir=True,
-            )
-        else:
-            base = app_layer(
-                name="{}.layer.{}".format(name, idx),
-                base=base,
-                dep=dep,
-            )
+        base = app_layer(
+            name="{}.layer.{}".format(name, idx),
+            base=base,
+            dep=dep,
+        )
+        base = app_layer(
+            name="{}.layer.{}-symlinks".format(name, idx),
+            base=base,
+            dep=dep,
+            binary=binary_name,
+        )
 
-    # app_layer(
-    #     name=name,
-    #     base=base,
-    #     entrypoint=entrypoint or ["/usr/local/bin/python"],
-    #     binary=binary_name,
-    #     visibility=visibility,
-    #     tags=tags,
-    #     args=kwargs.get("args"),
-    #     data=kwargs.get("data"),
-    #     create_empty_workspace_dir=True,
-    # )
+    app_layer(
+        name=name,
+        base=base,
+        entrypoint=entrypoint or ["/usr/local/bin/python"],
+        binary=binary_name,
+        visibility=visibility,
+        tags=tags,
+        args=kwargs.get("args"),
+        data=kwargs.get("data"),
+        create_empty_workspace_dir=True,
+    )
 
     # TODO: It would be cool to automatically generate the repository name from the target path.
     # E.g. //src/domain/target:image would go in {registry}/{workspace_name}/domain/target
