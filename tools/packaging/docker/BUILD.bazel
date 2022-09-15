@@ -1,3 +1,4 @@
+load("@bazel_tools//tools/python:toolchain.bzl", "py_runtime_pair")
 load("@io_bazel_rules_docker//container:image.bzl", "container_image")
 load("//tools/packaging/docker:repositories.bzl", "image")
 
@@ -11,4 +12,32 @@ container_image(
     },
     workdir="/app",
     visibility=["//visibility:public"],
+)
+
+
+# Python container toolchain:
+py_runtime(
+    name="container_python_runtime",
+    interpreter_path="/usr/local/bin/python",  # Path for python:3.10.2-slim
+    python_version="PY3",
+)
+py_runtime_pair(
+    name="container_python_runtime_pair",
+    py2_runtime=None,
+    py3_runtime="container_python_runtime",
+)
+toolchain(
+    name="container_python_toolchain",
+    exec_compatible_with=["@io_bazel_rules_docker//platforms:run_in_container"],
+    toolchain=":container_python_runtime_pair",
+    toolchain_type="@bazel_tools//tools/python:toolchain_type",
+)
+
+
+# C++ container toolchain (required during build for some reason)
+toolchain(
+    name="container_cc_toolchain",
+    exec_compatible_with=["@io_bazel_rules_docker//platforms:run_in_container"],
+    toolchain="@local_config_cc//:cc-compiler-k8",
+    toolchain_type="@bazel_tools//tools/cpp:toolchain_type",
 )
