@@ -17,7 +17,7 @@ environment(
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-# Python rules:
+# Fetch Python rules:
 http_archive(
     name="rules_python",
     sha256="9fcf91dbcc31fde6d1edb15f117246d912c33c36f44cf681976bd886538deba6",
@@ -25,9 +25,42 @@ http_archive(
     url="https://github.com/bazelbuild/rules_python/archive/refs/tags/0.8.0.tar.gz",
 )
 
+# Install skylib
+http_archive(
+    name="bazel_skylib",
+    urls=[
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
+    ],
+    sha256="af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a903de",
+)
 
-# Install Python:
+
+# Fetch Docker rules:
+http_archive(
+    name="io_bazel_rules_docker",
+    sha256="b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
+    urls=["https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz"],
+)
+
+load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories="repositories")
+container_repositories()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps="deps")
+container_deps(go_repository_default_config="@//:WORKSPACE.bazel")
+
+
+load("//tools/packaging/docker:repositories.bzl", local_container_repositories="repositories")
+local_container_repositories()
+
+
+# Register Python toolchain and repositories
+
+# This must happen after `local_container_repositories` above, to ensure the correct Python
+# toolchain is used for Docker images). Otherwise Python itself will be loaded as the final
+# layer in the image. See https://github.com/bazelbuild/rules_docker/issues/1858
 load("@rules_python//python:repositories.bzl", "python_register_toolchains")
+
 python_register_toolchains(
     name="python",
     # Available versions are listed in @rules_python//python:versions.bzl.
@@ -49,32 +82,3 @@ pipenv_parse(
 # Create repos for each dependency in python_deps
 load("@python_deps//:requirements.bzl", "install_deps")
 install_deps()
-
-
-# Install skylib
-http_archive(
-    name="bazel_skylib",
-    urls=[
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
-        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
-    ],
-    sha256="af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a903de",
-)
-
-
-# Docker rules:
-http_archive(
-    name="io_bazel_rules_docker",
-    sha256="b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
-    urls=["https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz"],
-)
-
-load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories="repositories")
-container_repositories()
-
-load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps="deps")
-container_deps(go_repository_default_config="@//:WORKSPACE.bazel")
-
-
-load("//tools/packaging/docker:repositories.bzl", local_container_repositories="repositories")
-local_container_repositories()

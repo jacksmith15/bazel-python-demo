@@ -1,4 +1,4 @@
-load("@io_bazel_rules_docker//lang:image.bzl", "app_layer")
+load("@io_bazel_rules_docker//lang:image.bzl", "app_layer", "filter_layer")
 load("@io_bazel_rules_docker//container:push.bzl", "container_push")
 load("@secrets//:vars.bzl", "IMAGE_REGISTRY")
 
@@ -16,17 +16,27 @@ def python_image(
     base = base or "//tools/packaging/docker:default_python_base"
     native.py_binary(
         name=binary_name,
+        exec_compatible_with=["@io_bazel_rules_docker//platforms:run_in_container"],
         **kwargs,
     )
-    # TODO: I think Python itself is getting loaded in the final layer, which may
-    # explain why the final layer is 250MB :(
-    # There isn't actually any need to vendor python at all, its already in the image.
-    for idx, dep in enumerate(kwargs.get("deps", [])):
+
+    external_deps_layer = "{}.layer.external".format(name)
+    filter_layer(name=external_deps_layer, dep=binary_name, filter="@")
+
+    deps = [external_deps_layer] + kwargs.get("deps", [])
+    for idx, dep in enumerate(deps):
         base = app_layer(
             name="{}.layer.{}".format(name, idx),
             base=base,
             dep=dep,
         )
+        base = app_layer(
+            name="{}.layer.{}-symlinks".format(name, idx),
+            base=base,
+            dep=dep,
+            binary=binary_name,
+        )
+
     app_layer(
         name=name,
         base=base,
