@@ -25,7 +25,6 @@ http_archive(
     url="https://github.com/bazelbuild/rules_python/archive/refs/tags/0.8.0.tar.gz",
 )
 
-
 # Install skylib
 http_archive(
     name="bazel_skylib",

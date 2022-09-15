@@ -25,6 +25,6 @@ def repositories():
     native.register_toolchains("//tools/packaging/docker:container_python_toolchain")
     native.register_toolchains("//tools/packaging/docker:container_cc_toolchain")
     native.register_execution_platforms(
-        "@io_bazel_rules_docker//platforms:local_container_platform",
         "@local_config_platform//:host",
+        "@io_bazel_rules_docker//platforms:local_container_platform",
     )
