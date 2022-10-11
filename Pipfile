@@ -23,6 +23,7 @@ pytest-asyncio = "==0.18.2"
 pytest-docker = "==0.10.3"
 coverage = "~=6.3"
 twine = "~=4.0.0"
+pycodestyle = "~=2.7"
 
 [dev-packages]
 

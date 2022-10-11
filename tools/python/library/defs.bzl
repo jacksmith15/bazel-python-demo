@@ -4,6 +4,7 @@ load("//tools/python/black:defs.bzl", "black_test")
 load("//tools/python/isort:defs.bzl", "isort_test")
 load("//tools/python/mypy:defs.bzl", "mypy_test")
 load("//tools/python/pylint:defs.bzl", "pylint_test")
+load("//tools/python/pycodestyle:rules.bzl", "pycodestyle_test")
 load("//tools/python/pytest:defs.bzl", "pytest_test")
 
 
@@ -150,6 +151,13 @@ def python_library(
         imports=imports,
     )
 
+    pycodestyle_test(
+        name=make_name("pycodestyle.lib"),
+        srcs=sources.sources,
+        deps=[],  # We don't other deps for pycodestyle
+        imports=imports,
+    )
+
     if not sources.test_sources:
         return
 
@@ -167,6 +175,13 @@ def python_library(
         srcs=sources.test_sources,
         deps=test_deps,
         pylintrc=Label("//tools/python/library/config:tests.pylintrc"),
+        imports=imports,
+    )
+
+    pycodestyle_test(
+        name=make_name("pycodestyle.tests"),
+        srcs=sources.test_sources,
+        deps=[],  # We don't other deps for pycodestyle
         imports=imports,
     )
 
