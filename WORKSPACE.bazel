@@ -17,6 +17,12 @@ environment(
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+
+# Install lcov dependencies:
+load("//tools/coverage/lcov:repositories.bzl", "install_lcov_dependencies")
+install_lcov_dependencies()
+
+
 # Fetch Python rules:
 http_archive(
     name="rules_python",
