@@ -191,6 +191,43 @@ You can also publish a subset of targets by providing a query, for example:
 
 > :memo: Authentication with image registries is controlled by the regular `DOCKER_CONFIG` variable (or its default `~/.docker/config.json`). This means users and CI can perform `docker login` commands before running the build and publish steps.
 
+
+## Dependency management
+
+### Upgrade Python dependencies
+
+Python dependencies are (mostly) managed in a tracked `Pipfile` and `Pipfile.lock` in the root of the repository. To perform dependency upgrades across all targets, you only need to upgrade these files. For example:
+
+```bash
+pipenv lock  # Re-lock the Pipfile
+bazel build //...  # Re-build with the new dependencies
+```
+
+> :information_source: You don't actually need `pipenv` installed on your host machine for this to work. You can run the same `pipenv` version used by Bazel like so:
+> ```bash
+> ./run.sh //tools/python/pipenv lock
+> ```
+> 
+> This ensures the correct version of `pipenv` is used when locking the `Pipfile`.
+
+
+### Upgrade Pipenv
+
+Pipenv itself is not managed in the `Pipfile` to avoid cyclic dependencies. To bootstrap it, Pipenv and its dependencies are installed with using regular Bazel mechanisms. These are controlled in [tools/python/pipenv/repositories.bzl](tools/python/pipenv/repositories.bzl).
+
+To reduce manual effort required when performing upgrades, a script is provided which generates the Pipenv dependencies in the format required by `repositories.bzl`. Run this as:
+
+```bash
+python3 tools/python/pipenv/helpers/generate-pipenv-tool-deps.py
+```
+
+### Upgrade Bazel rules
+
+A number of Bazel rule packages are used in this repository, such as [rules_python](https://github.com/bazelbuild/rules_python) and [rules_docker](https://github.com/bazelbuild/rules_docker).
+
+These are managed as entries in [WORKSPACE.bazel](./WORKSPACE.bazel) and can be upgraded by replacing with newer snippets, usually provided on the GitHub release of the corresponding package.
+
+
 ## Interpreter/IDE integration
 
 Since Bazel runs everything in sandboxes it is difficult to get direct integration with IDEs. However it is possible to approximate this by creating a root virtual environment containing the superset of all dependencies:

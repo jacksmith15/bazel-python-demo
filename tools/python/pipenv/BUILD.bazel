@@ -1,0 +1,10 @@
+load("//tools/python/pipenv:repositories.bzl", "all_requirements")
+
+py_binary(
+    name="pipenv",
+    srcs=["pipenv_wrapper.py"],
+    main="pipenv_wrapper.py",
+    deps=all_requirements,
+    visibility=["//visibility:public"],
+    python_version="PY3",
+)

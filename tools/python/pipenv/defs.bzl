@@ -1,5 +1,5 @@
 load("@rules_python//python:pip.bzl", "pip_parse")
-load("//tools/python/pipenv:repositories.bzl", "pipenv_install_internal_dependencies", "all_requirements")
+load("//tools/python/pipenv:repositories.bzl", "pipenv_install_internal_dependencies", "all_repositories")
 
 _REQUIREMENTS_LOCK = "requirements-lock.txt"
 
@@ -126,7 +126,7 @@ def _construct_pypath(rctx):
     thirdparty_roots = [
         # Includes all the external dependencies from repositories.bzl
         rctx.path(Label("@" + repo + "//:BUILD.bazel")).dirname
-        for repo in all_requirements
+        for repo in all_repositories
     ]
     separator = ":" if not "windows" in rctx.os.name.lower() else ";"
     pypath = separator.join([str(p) for p in [rules_root] + thirdparty_roots])

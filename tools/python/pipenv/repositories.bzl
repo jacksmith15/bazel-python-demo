@@ -71,7 +71,10 @@ def requirement(name):
 
 
 # Collate all the repository names so they can be easily consumed
-all_requirements = [_repository(name) for (name, _, _) in _RULE_DEPS]
+all_repositories = [_repository(name) for (name, _, _) in _RULE_DEPS]
+
+# Collate all the requirement names so they can be easily consumed
+all_requirements = [requirement(name) for (name, _, _) in _RULE_DEPS]
 
 
 def pipenv_install_internal_dependencies():
