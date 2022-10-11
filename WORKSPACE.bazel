@@ -25,16 +25,6 @@ http_archive(
     url="https://github.com/bazelbuild/rules_python/archive/refs/tags/0.13.0.tar.gz",
 )
 
-# Install skylib
-http_archive(
-    name="bazel_skylib",
-    urls=[
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
-        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.0/bazel-skylib-1.2.0.tar.gz",
-    ],
-    sha256="af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a903de",
-)
-
 
 # Fetch Docker rules:
 http_archive(
