@@ -10,7 +10,7 @@ from functools import cache, partial
 from pathlib import Path
 from typing import TextIO
 
-from pipenv.patched.pipfile.api import Pipfile
+from pipenv.vendor.plette import Pipfile
 from pipenv.vendor.requirementslib import Requirement
 
 
@@ -32,7 +32,9 @@ def main(pipfile: str = "Pipfile", pipfile_lock: str = "Pipfile.lock", output_pa
 
 def verify_lockfile(pipfile: str, pipfile_lock: str) -> None:
     """Check that Pipfile.lock is up-to-date."""
-    if Pipfile.load(pipfile).hash != load_lockfile(pipfile_lock)["_meta"]["hash"]["sha256"]:
+    with open(pipfile, "r", encoding="utf-8") as file:
+        pipfile_hash = Pipfile.load(file).get_hash().value
+    if pipfile_hash != load_lockfile(pipfile_lock)["_meta"]["hash"]["sha256"]:
         raise RuntimeError(
             f"The lockfile ({pipfile_lock} is not up-to-date with the pipfile ({pipfile}). "
             "Run `pipenv lock` before building."
