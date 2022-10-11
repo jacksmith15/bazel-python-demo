@@ -259,6 +259,5 @@ This approach is not perfect, and there are a few drawbacks:
 ## TODOS
 
 - `pydocstyle` etc.
-- Test coverage doesn't support branch coverage (limitation of `lcov` format in coverage-py).
 - Running tests for multiple python versions?
 - Maybe remote caching?
