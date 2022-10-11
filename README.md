@@ -260,4 +260,5 @@ This approach is not perfect, and there are a few drawbacks:
 
 - `pydocstyle` etc.
 - Running tests for multiple python versions?
-- Maybe remote caching?
+- Remote caching #3
+- CircleCI caching strategy? Since the cache is immutable, its extremely hard to avoid massive storage usage.
