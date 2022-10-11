@@ -29,7 +29,6 @@ MYPYPATH solves the problem of in-line type hints, or stub files included in lib
 Inspired by: https://github.com/thundergolfer/bazel-mypy-integration/pull/25/files
 """
 import sys
-import os
 from pathlib import Path
 
 from mypy.pyinfo import getprefixes, getsitepackages
@@ -45,8 +44,8 @@ def get_extended_sitepackages():
         if not path.is_dir():
             continue
         for subpath in path.iterdir():
-            if subpath.is_dir() and subpath.name.endswith(".dist-info"):
-                yield str(path)
+            if subpath.is_dir() and subpath.name == "site-packages":
+                yield str(subpath)
 
 
 if __name__ == "__main__":
@@ -55,5 +54,5 @@ if __name__ == "__main__":
     elif sys.argv[-1] == "getprefixes":
         print(repr(getprefixes()))
     else:
-        print("ERROR: incorrect argument to pyinfo.py.", file=sys.stderr)
+        print("ERROR: incorrect argument to sitepkg_loader.py.", file=sys.stderr)
         sys.exit(1)
