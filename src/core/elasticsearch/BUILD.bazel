@@ -13,9 +13,9 @@ python_library(
     ],
     imports=["../.."],
     visibility=["//visibility:public"],
-    version="0.1.0",
+    version="0.2.0",
     wheel=wheel(
         name="core.elasticsearch",
-        requires=["elasticsearch>=7.16,<8", "pydantic>=1.9,<2"],
+        requires=["elasticsearch[async]>=7.16,<8", "pydantic>=1.9,<2"],
     )
 )
