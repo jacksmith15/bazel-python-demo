@@ -5,6 +5,7 @@ load("//tools/python/isort:defs.bzl", "isort_test")
 load("//tools/python/mypy:defs.bzl", "mypy_test")
 load("//tools/python/pylint:defs.bzl", "pylint_test")
 load("//tools/python/pycodestyle:rules.bzl", "pycodestyle_test")
+load("//tools/python/pydocstyle:rules.bzl", "pydocstyle_test")
 load("//tools/python/pytest:defs.bzl", "pytest_test")
 
 
@@ -155,6 +156,13 @@ def python_library(
         name=make_name("pycodestyle.lib"),
         srcs=sources.sources,
         deps=[],  # We don't other deps for pycodestyle
+        imports=imports,
+    )
+
+    pydocstyle_test(
+        name=make_name("pydocstyle.lib"),
+        srcs=sources.sources,
+        deps=[],  # We don't other deps for pydocstyle
         imports=imports,
     )
 

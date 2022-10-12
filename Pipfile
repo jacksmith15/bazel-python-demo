@@ -24,6 +24,7 @@ pytest-docker = "==0.10.3"
 coverage = "~=6.3"
 twine = "~=4.0.0"
 pycodestyle = "~=2.7"
+pydocstyle = "~=6.0"
 
 [dev-packages]
 
