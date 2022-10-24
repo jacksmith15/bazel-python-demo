@@ -1,0 +1,5 @@
+py_binary(
+    name="hash-build-graph",
+    srcs=["hash_build_graph.py"],
+    main="hash_build_graph.py"
+)
