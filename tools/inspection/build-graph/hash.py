@@ -43,6 +43,10 @@ def parse_args():
 def get_build_graph(args) -> ElementTree.Element:
     if args.file:
         return ElementTree.parse(args.file).getroot()
+    return generate_build_graph()
+
+
+def generate_build_graph() -> ElementTree.Element:
     result = subprocess.run(
         ["bazel", "query", "--output=xml", "--relative_locations", "deps(//...)"],
         check=True,
