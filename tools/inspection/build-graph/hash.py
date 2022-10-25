@@ -46,7 +46,7 @@ def get_build_graph(args) -> ElementTree.Element:
 
 def generate_build_graph() -> ElementTree.Element:
     result = subprocess.run(
-        ["bazel", "query", "--output=xml", "--relative_locations", "deps(//...)"],
+        ["bazel", "query", "--order_output=no", "--output=xml", "--relative_locations", "deps(//...)"],
         check=True,
         capture_output=True,
         text=True,
