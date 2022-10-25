@@ -1,3 +1,20 @@
+"""Tool to identify which targets are affected between two commits.
+
+Implementation notes:
+
+    Currently this actively checks out the relevant commits, analyses the build graph and
+    produces a set of hashes for each commit.
+
+    Two alternative strategies have some advantages, particularly if this process slows when
+    the repository grows:
+
+    1. Require that an up-to-date hash file is committed (with pre-commit and CI). This
+       reduces the work required, and doesn't require use of stash and checkout
+    2. Store the hash file for each commit in an external data-store, e.g. S3, with
+       fallback to the current strategy. This might be appropriate if the hash-file grows
+       so large it shouldn't be committed.
+
+"""
 import argparse
 import subprocess
 import sys
@@ -15,16 +32,6 @@ def main():
         default=False,
         help="Simplify output by displaying affected packages rather than targets.",
     )
-    # parser.add_argument(
-    #     "-s",
-    #     "--strategy",
-    #     choices=["checkout", "commit_file"],
-    #     default="checkout",
-    #     help=(
-    #         "The strategy for fetching the hash file. Defaults to 'checkout' which means "
-    #         "the target ref will be checked out and the build graph generated."
-    #     ),
-    # )
     parser.add_argument("source_ref", help="The git ref to compare changes to.")
     parser.add_argument(
         "target_ref",
