@@ -1,35 +1,48 @@
+import argparse
 import json
 import subprocess
-import sys
 from functools import lru_cache
 from hashlib import sha256
-from io import StringIO
 from pathlib import Path
-from typing import IO
 from xml.etree import ElementTree
 
 
 def main() -> None:
-    result = hash_build_graph(parse_graph_from_args())
+    args = parse_args()
+    build_graph = get_build_graph(args)
+    result = hash_build_graph(build_graph)
     print(json.dumps(result, indent=2, sort_keys=True))
 
 
-def parse_graph_from_args() -> str | IO[str]:
-    if len(sys.argv) == 1:
-        result = subprocess.run(
-            ["bazel", "query", "--output=xml", "--relative_locations", "deps(//...)"],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        return StringIO(result.stdout)
-    if sys.argv[1] == "-":
-        return sys.stdin
-    return sys.argv[1]
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Generate a hash file from Bazel's build graph.",
+    )
+    parser.add_argument(
+        "file",
+        type=argparse.FileType("r"),
+        nargs="?",
+        help=(
+            "A file containing a bazel `deps` query output in xml format with relative "
+            "locations. Omit to generate the build graph automatically."
+        ),
+    )
+    return parser.parse_args()
 
 
-def hash_build_graph(data: str | IO[str]) -> dict[str, str]:
-    graph = ElementTree.parse(data).getroot()
+def get_build_graph(args) -> ElementTree.Element:
+    if args.file:
+        return ElementTree.parse(args.file).getroot()
+    result = subprocess.run(
+        ["bazel", "query", "--output=xml", "--relative_locations", "deps(//...)"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    return ElementTree.fromstring(result)
+
+
+def hash_build_graph(graph: ElementTree.Element) -> dict[str, str]:
     targets_by_name = {element.attrib["name"]: element for element in graph}
 
     @lru_cache(maxsize=None)
