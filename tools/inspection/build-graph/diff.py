@@ -32,7 +32,6 @@ def main():
         help=("The git ref containing changes. Omit to use current state, including staged " "and unstaged changes."),
     )
     args = parser.parse_args()
-    assert args.strategy != "commit", "--strategy=commit not yet supported"
 
     source_ref = get_merge_base(args.source_ref, args.target_ref)
     source_hash, target_hash = get_hashes(source_ref, args.target_ref)

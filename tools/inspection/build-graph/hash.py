@@ -24,9 +24,7 @@ def parse_args():
         type=argparse.FileType("w"),
         nargs="?",
         default=sys.stdout,
-        help=(
-            "Where to write the hash file. Writes to STDOUT by default."
-        )
+        help=("Where to write the hash file. Writes to STDOUT by default."),
     )
     parser.add_argument(
         "file",
@@ -86,51 +84,47 @@ def hash_build_graph(graph: ElementTree.Element) -> dict[str, str]:
                 sha.update(get_hash(child.attrib["name"]).encode("utf-8"))
         return sha.hexdigest()
 
+    @lru_cache(maxsize=None)
+    def hash_source_file(location: str) -> bytes:
+        sha = sha256()
+        path = location.rsplit(":", 2)[0]  # Location includes line and column suffix
+        with open(path, "rb") as file:
+            while True:
+                block = file.read(sha.block_size)
+                if not block:
+                    break
+                sha.update(block)
+        return sha.hexdigest().encode("utf-8")
+
+    def repository_name(target_name: str) -> str:
+        if target_name.startswith("@"):
+            return target_name.split("//", 1)[0].removeprefix("@")
+        return ""
+
+    @lru_cache(maxsize=None)
+    def external_repository_hash(repo_name: str) -> bytes:
+        marker_path = get_output_base() / "external" / f"@{repo_name}.marker"
+        content = marker_path.read_bytes()
+        sha = sha256()
+        sha.update(content)
+        return sha.hexdigest().encode("utf-8")
+
+    @lru_cache(maxsize=1)
+    def get_output_base() -> Path:
+        return Path(
+            subprocess.run(
+                ["bazel", "info", "output_base"],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+        )
+
     return {
         name: get_hash(name)
         for name, target in targets_by_name.items()
         if name.startswith("//") and target.tag == "rule"
     }
-
-
-@lru_cache(maxsize=None)
-def hash_source_file(location: str) -> bytes:
-    sha = sha256()
-    path = location.rsplit(":", 2)[0]  # Location includes line and column suffix
-    with open(path, "rb") as file:
-        while True:
-            block = file.read(sha.block_size)
-            if not block:
-                break
-            sha.update(block)
-    return sha.hexdigest().encode("utf-8")
-
-
-def repository_name(target_name: str) -> str:
-    if target_name.startswith("@"):
-        return target_name.split("//", 1)[0].removeprefix("@")
-    return ""
-
-
-@lru_cache(maxsize=None)
-def external_repository_hash(repo_name: str) -> bytes:
-    marker_path = get_output_base() / "external" / f"@{repo_name}.marker"
-    content = marker_path.read_bytes()
-    sha = sha256()
-    sha.update(content)
-    return sha.hexdigest().encode("utf-8")
-
-
-@lru_cache(maxsize=1)
-def get_output_base() -> Path:
-    return Path(
-        subprocess.run(
-            ["bazel", "info", "output_base"],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-    )
 
 
 if __name__ == "__main__":
