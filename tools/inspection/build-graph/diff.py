@@ -5,29 +5,46 @@ from contextlib import contextmanager
 
 from hash import generate_build_graph, hash_build_graph
 
-# TODO:
-# - output=packages for human readable
-# - output=targets for informing test runner
 
 def main():
     parser = argparse.ArgumentParser(description="Generate a diff from Bazel build graphs.")
-    parser.add_argument("-o", "--output", choices=["package", "target"], default="target")
-    parser.add_argument("-s", "--strategy", choices=["checkout", "commit"], default="checkout")
-    parser.add_argument("source_commit")
-    parser.add_argument("target_commit", nargs="?")
+    parser.add_argument(
+        "-p",
+        "--packages",
+        action="store_true",
+        default=False,
+        help="Simplify output by displaying affected packages rather than targets.",
+    )
+    # parser.add_argument(
+    #     "-s",
+    #     "--strategy",
+    #     choices=["checkout", "commit_file"],
+    #     default="checkout",
+    #     help=(
+    #         "The strategy for fetching the hash file. Defaults to 'checkout' which means "
+    #         "the target ref will be checked out and the build graph generated."
+    #     ),
+    # )
+    parser.add_argument("source_ref", help="The git ref to compare changes to.")
+    parser.add_argument(
+        "target_ref",
+        nargs="?",
+        help=("The git ref containing changes. Omit to use current state, including staged " "and unstaged changes."),
+    )
     args = parser.parse_args()
     assert args.strategy != "commit", "--strategy=commit not yet supported"
 
-    source_hash, target_hash = get_hashes(args.source_commit, args.target_commit)
+    source_ref = get_merge_base(args.source_ref, args.target_ref)
+    source_hash, target_hash = get_hashes(source_ref, args.target_ref)
 
-    affected = get_affected(source_hash, target_hash, packages=(args.output == "package"))
+    affected = get_affected(source_hash, target_hash, packages=args.packages)
     print("\n".join(affected))
 
 
-def get_hashes(source_commit: str, target_commit: str | None = None) -> tuple[dict, dict]:
-    with checkout(target_commit):
+def get_hashes(source_ref: str, target_ref: str | None = None) -> tuple[dict, dict]:
+    with checkout(target_ref):
         target_hash = generate_hash()
-    with checkout(source_commit):
+    with checkout(source_ref):
         source_hash = generate_hash()
     return source_hash, target_hash
 
@@ -40,13 +57,9 @@ def get_affected(source_hash: dict, target_hash: dict, packages: bool = True) ->
     targets = diff_build_graph(source_hash, target_hash)
     if not packages:
         return targets
-    return subprocess.run(
+    return run(
         ["bazel", "query", "--output=package", " union ".join(targets)],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.splitlines()
-
+    ).splitlines()
 
 
 def diff_build_graph(source_hash: dict, target_hash: dict) -> list[str]:
@@ -74,9 +87,12 @@ def checkout(commit: str | None = None):
 
 
 def has_staged_or_unstaged_changes() -> bool:
-    return bool(
-        run(["git", "status", "--porcelain"])
-    )
+    return bool(run(["git", "status", "--porcelain"]))
+
+
+def get_merge_base(source_ref: str, target_ref: str | None = None) -> str:
+    target_ref = target_ref or "HEAD"
+    return run(["git", "merge-base", source_ref, target_ref])
 
 
 def run(cmd: list[str]) -> str:
