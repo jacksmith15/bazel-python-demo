@@ -60,7 +60,7 @@ def checkout(commit: str | None = None):
         return
     stash = has_staged_or_unstaged_changes()
     if stash:
-        run(["git", "stash", "push", "--all"])
+        run(["git", "stash", "push", "--include-untracked"])
     try:
         original_commit = run(["git", "rev-parse", "--abbrev-ref", "HEAD"])
         run(["git", "checkout", commit])
