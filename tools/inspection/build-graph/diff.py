@@ -32,11 +32,13 @@ def main():
         default=False,
         help="Simplify output by displaying affected packages rather than targets.",
     )
-    parser.add_argument("source_ref", help="The git ref to compare changes to.")
+    parser.add_argument(
+        "source_ref", default="HEAD", nargs="?", help="The git ref to compare changes to. Defaults to HEAD."
+    )
     parser.add_argument(
         "target_ref",
         nargs="?",
-        help=("The git ref containing changes. Omit to use current state, including staged " "and unstaged changes."),
+        help="The git ref containing changes. Omit to use current state, including staged and unstaged changes.",
     )
     args = parser.parse_args()
 
