@@ -9,8 +9,6 @@ from typing import IO
 from xml.etree import ElementTree
 
 
-# TODO: Test with a single pipenv version change
-
 def main() -> None:
     result = hash_build_graph(parse_graph_from_args())
     print(json.dumps(result, indent=2, sort_keys=True))
@@ -19,7 +17,7 @@ def main() -> None:
 def parse_graph_from_args() -> str | IO[str]:
     if len(sys.argv) == 1:
         result = subprocess.run(
-            ["bazel", "query", "--output=xml", "deps(//...)"],
+            ["bazel", "query", "--output=xml", "--relative_locations", "deps(//...)"],
             check=True,
             capture_output=True,
             text=True,
@@ -41,14 +39,23 @@ def hash_build_graph(data: str | IO[str]) -> dict[str, str]:
         sha.update(ElementTree.tostring(element, encoding="utf-8"))
 
         if element.tag == "source-file":
-            if element.attrib["name"].startswith("//"):
-                sha.update(hash_source_file(element.attrib["location"]))
-            else:
-                sha.update(hash_external_file(element.attrib["name"]))
+            sha.update(hash_source_file(element.attrib["location"]))
 
+        seen_repos: set[str] = set()
 
         for child in element:
-            if child.tag == "rule-input":
+            if child.tag != "rule-input":
+                continue
+            if repo := repository_name(child.attrib["name"]):
+                # We don't traverse source files for external repositories - the files
+                # likely don't exist outside of build time. Besides this, they contain
+                # elements with absolute paths, which makes hashing not portable.
+                # Instead, we include the repo marker hash for any external repositories.
+                if repo in seen_repos:
+                    continue
+                sha.update(external_repository_hash(repo))
+                seen_repos.update(repo)
+            else:
                 sha.update(get_hash(child.attrib["name"]).encode("utf-8"))
         return sha.hexdigest()
 
@@ -71,9 +78,10 @@ def hash_source_file(location: str) -> bytes:
     return sha.hexdigest().encode("utf-8")
 
 
-def hash_external_file(name: str) -> bytes:
-    repository = name.removeprefix("@").split("//")[0]
-    return external_repository_hash(repository)
+def repository_name(name: str) -> str:
+    if name.startswith("@"):
+        return name.split("//", 1)[0].removeprefix("@")
+    return ""
 
 
 @lru_cache(maxsize=None)
