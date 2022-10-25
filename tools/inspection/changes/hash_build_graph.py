@@ -1,6 +1,7 @@
 import argparse
 import json
 import subprocess
+import sys
 from functools import lru_cache
 from hashlib import sha256
 from pathlib import Path
@@ -11,12 +12,21 @@ def main() -> None:
     args = parse_args()
     build_graph = get_build_graph(args)
     result = hash_build_graph(build_graph)
-    print(json.dumps(result, indent=2, sort_keys=True))
+    print(json.dumps(result, indent=2, sort_keys=True), file=args.out)
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Generate a hash file from Bazel's build graph.",
+    )
+    parser.add_argument(
+        "out",
+        type=argparse.FileType("w"),
+        nargs="?",
+        default=sys.stdout,
+        help=(
+            "Where to write the hash file. Writes to STDOUT by default."
+        )
     )
     parser.add_argument(
         "file",
@@ -79,6 +89,7 @@ def hash_build_graph(graph: ElementTree.Element) -> dict[str, str]:
     }
 
 
+@lru_cache(maxsize=None)
 def hash_source_file(location: str) -> bytes:
     sha = sha256()
     path = location.rsplit(":", 2)[0]  # Location includes line and column suffix
@@ -91,9 +102,9 @@ def hash_source_file(location: str) -> bytes:
     return sha.hexdigest().encode("utf-8")
 
 
-def repository_name(name: str) -> str:
-    if name.startswith("@"):
-        return name.split("//", 1)[0].removeprefix("@")
+def repository_name(target_name: str) -> str:
+    if target_name.startswith("@"):
+        return target_name.split("//", 1)[0].removeprefix("@")
     return ""
 
 
