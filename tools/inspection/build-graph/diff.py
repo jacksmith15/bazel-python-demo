@@ -1,5 +1,6 @@
 import argparse
 import subprocess
+import sys
 from contextlib import contextmanager
 
 from hash import generate_build_graph, hash_build_graph
@@ -79,7 +80,12 @@ def has_staged_or_unstaged_changes() -> bool:
 
 
 def run(cmd: list[str]) -> str:
-    return subprocess.run(cmd, check=True, capture_output=True, text=True).stdout.strip()
+    try:
+        return subprocess.run(cmd, check=True, capture_output=True, text=True).stdout.strip()
+    except subprocess.CalledProcessError as exc:
+        print(exc.stdout, file=sys.stderr)
+        print(exc.stderr, file=sys.stderr)
+        raise exc
 
 
 if __name__ == "__main__":
