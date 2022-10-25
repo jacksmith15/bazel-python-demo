@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate a diff from Bazel build graphs.")
     parser.add_argument("-o", "--output", choices=["package", "target"], default="target")
     parser.add_argument("-s", "--strategy", choices=["checkout", "commit"], default="checkout")
-    parser.add_argument("source_commit", nargs="1")
+    parser.add_argument("source_commit", nargs=1)
     parser.add_argument("target_commit", nargs="?")
     args = parser.parse_args()
     assert args.strategy != "commit", "--strategy=commit not yet supported"
@@ -59,7 +59,7 @@ def checkout(commit: str | None = None):
         return
     stash = has_staged_or_unstaged_changes()
     if stash:
-        run(["git", "stash", "push", "all"])
+        run(["git", "stash", "push", "--all"])
     try:
         original_commit = run(["git", "rev-parse", "--abbrev-ref", "HEAD"])
         run(["git", "checkout", commit])
