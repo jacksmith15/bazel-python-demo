@@ -55,7 +55,7 @@ def main():
     source_hash, target_hash = get_hashes(source_ref, args.target_ref)
 
     affected = get_affected(source_hash, target_hash, output=args.output)
-    print("\n".join(affected))
+    print("\n".join(sorted(affected)))
 
 
 def get_hashes(source_ref: str, target_ref: str | None = None) -> tuple[dict, dict]:

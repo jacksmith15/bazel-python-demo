@@ -22,6 +22,7 @@ def python_library(
     wheel=None,
     description=None,
     version=None,
+    main=None,
     **kwargs
 ):
     """A macro for declaring a python library, complete with tests and typechecking.
@@ -58,6 +59,10 @@ def python_library(
     To build a docker image, either pass `image=True` or `image=kwargs`, where kwargs are passed
     directly to `python_image`.
     """
+    deps = deps or []
+    test_deps = test_deps or []
+    imports = imports or []
+
     def make_name(subname):
         prefix = "{}.".format(name) if name else ""
         return "{}{}".format(prefix, subname)
@@ -92,8 +97,19 @@ def python_library(
         **kwargs
     )
 
+    if main:
+        native.py_binary(
+            name=make_name("binary"),
+            srcs=sources.sources,
+            main=main,
+            data=data,
+            deps=deps,
+            imports=imports,
+            **kwargs,
+        )
+
     if image_repository:
-        if "__main__.py" not in sources.sources:
+        if not main and "__main__.py" not in sources.sources:
             fail("Cannot specify 'image_repository' if the sources do not include a '__main__.py' entry point.")
         python_image(
             name=make_name("image"),
@@ -102,7 +118,7 @@ def python_library(
             data=data,
             deps=deps,
             imports=imports,
-            main="__main__.py",
+            main=main or "__main__.py",
             visibility=kwargs.get("visibility"),
         )
 

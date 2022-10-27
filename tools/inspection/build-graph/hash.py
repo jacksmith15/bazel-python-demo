@@ -54,7 +54,7 @@ def generate_build_graph() -> ElementTree.Element:
     return ElementTree.fromstring(result)
 
 
-def hash_build_graph(graph: ElementTree.Element) -> dict[str, str]:
+def hash_build_graph(graph: ElementTree.Element) -> dict[str, str]:  # pylint: disable=too-complex
     targets_by_name = {element.attrib["name"]: element for element in graph}
 
     @lru_cache(maxsize=None)

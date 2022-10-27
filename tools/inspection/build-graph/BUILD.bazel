@@ -1,12 +1,18 @@
-py_binary(
+load("//tools/python/library:defs.bzl", "python_library")
+
+
+python_library(
     name="hash",
     srcs=["hash.py"],
-    main="hash.py"
+    main="hash.py",
+    imports=["."]
 )
 
-py_binary(
+
+python_library(
     name="diff",
-    srcs=["diff.py", "hash.py"],
+    srcs=["diff.py"],
+    deps=[":hash.lib"],
     main="diff.py",
     imports=["."]
 )
