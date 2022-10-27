@@ -3,7 +3,6 @@
 import argparse
 import difflib
 import os
-import shutil
 from pathlib import Path
 from typing import Callable
 
@@ -21,7 +20,6 @@ def main():
 
     """
     args = parse_args()
-    formatter_output_dirs = find_formatter_output_dirs(args.genfiles_root)
 
     for unformatted_file, formatted_file in get_formatted_files(args.workspace_root, args.genfiles_root).items():
         formatted_content = formatted_file.read_text(encoding="utf-8")
@@ -63,7 +61,7 @@ def parse_args():
 
 
 def get_formatted_files(workspace_root: str, genfiles_root: str) -> dict[Path, Path]:
-    result = {}  # unformatted -> formatted
+    result: dict[Path, Path] = {}  # unformatted -> formatted
     for output_dir in find_formatter_output_dirs(genfiles_root):
         for formatted_file in output_dir.glob("**/*"):
             if formatted_file.is_dir():

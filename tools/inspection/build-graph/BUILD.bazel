@@ -1,0 +1,18 @@
+load("//tools/python/library:defs.bzl", "python_library")
+
+
+python_library(
+    name="hash",
+    srcs=["hash.py"],
+    main="hash.py",
+    imports=["."]
+)
+
+
+python_library(
+    name="diff",
+    srcs=["diff.py"],
+    deps=[":hash.lib"],
+    main="diff.py",
+    imports=["."]
+)

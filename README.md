@@ -133,6 +133,32 @@ To generate an HTML coverage report, run:
 >   Install with e.g. `brew install lcov` or `apt install lcov`
 
 
+## Change detection
+
+See which targets are affected by your staged and unstaged changes:
+
+```bash
+./diff.sh
+```
+
+Or compare with a specific commit or branch:
+
+```bash
+./diff.sh main
+```
+
+If the output is very long, you can simplify to just the affected packages:
+
+```bash
+./diff.sh --output package
+```
+
+This can also be used to selectively publish. For example, to publish all targets which are affected by the most recent commit:
+
+```bash
+./publish.sh "$(./diff.sh -o query HEAD~1)"
+```
+
 ## Packaging and publishing
 
 Two types of published artifacts are supported - docker images and wheels.
