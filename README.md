@@ -284,6 +284,5 @@ This approach is not perfect, and there are a few drawbacks:
 
 ## TODOS
 
-- `pydocstyle` etc.
-- Running tests for multiple python versions?
-- Maybe remote caching?
+- Remote caching
+- Running tests for multiple python versions
