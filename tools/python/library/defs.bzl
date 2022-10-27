@@ -1,3 +1,4 @@
+load("@rules_python//python:defs.bzl", "py_library", "py_binary")
 load("//tools/packaging/docker:rules.bzl", "python_image")
 load("//tools/packaging/wheel:defs.bzl", "python_wheel")
 load("//tools/python/black:defs.bzl", "black_test")
@@ -88,7 +89,7 @@ def python_library(
         pyproject=pyproject,
     )
 
-    native.py_library(
+    py_library(
         name=make_name("lib"),
         srcs=sources.sources,
         data=data + sources.stubs,
@@ -98,7 +99,7 @@ def python_library(
     )
 
     if main:
-        native.py_binary(
+        py_binary(
             name=make_name("binary"),
             srcs=sources.sources,
             main=main,
@@ -142,7 +143,7 @@ def python_library(
 
 
     if sources.test_sources:
-        native.py_library(  # This ensures test files are detected by formatter
+        py_library(  # This ensures test files are detected by formatter
             name=make_name("test"),
             srcs=sources.test_sources,
             data=test_data + sources.test_stubs,
