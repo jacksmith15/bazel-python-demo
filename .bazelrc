@@ -4,6 +4,9 @@ build --java_runtime_version=remotejdk_11
 # Required for docker_rules to work on Mac
 build --@io_bazel_rules_docker//transitions:enable=false
 
+# Don't clutter the workspace with symlinks
+build --experimental_convenience_symlinks=clean
+
 # Stamping
 build --workspace_status_command=$PWD/stamp.sh
 
