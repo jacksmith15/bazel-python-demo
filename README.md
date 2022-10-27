@@ -150,7 +150,13 @@ Or compare with a specific commit or branch:
 If the output is very long, you can simplify to just the affected packages:
 
 ```bash
-./diff.sh --packages
+./diff.sh --output package
+```
+
+This can also be used to selectively publish. For example, to publish all targets which are affected by the most recent commit:
+
+```bash
+./publish.sh "$(./diff.sh -o query HEAD~1)"
 ```
 
 ## Packaging and publishing
