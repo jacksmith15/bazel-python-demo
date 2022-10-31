@@ -12,5 +12,7 @@ shift
 # Find where the built executable lives:
 target_executable=$(bazel cquery "${target}" --output starlark --starlark:expr 'target.files_to_run.executable.path' 2>/dev/null)
 
+base_path=$(dirname $(bazel info output_path 2>/dev/null))
+
 # Execute it with the arguments provided:
-"$target_executable" "$@"
+"${base_path}/${target_executable}" "$@"
