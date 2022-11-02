@@ -32,6 +32,27 @@ http_archive(
 )
 
 
+# Fetch Go rules (used by Docker rules):
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "e0015762cdeb5a2a9c48f96fb079c6a98e001d44ec23ad4fa2ca27208c5be4fb",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.24.14/rules_go-v0.24.14.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.24.14/rules_go-v0.24.14.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_rules_dependencies")
+
+# go_download_sdk(name="go_sdk", goos="linux", goarch="arm64")
+
+go_rules_dependencies()
+
+load("//tools/go:repositories.bzl", "go_register_toolchains")
+
+go_register_toolchains()
+
+
 # Fetch Docker rules:
 http_archive(
     name="io_bazel_rules_docker",
