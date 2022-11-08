@@ -1,6 +1,5 @@
 load("//tools/python/base:library.bzl", "python_library")
 load("//tools/python/base:entrypoint.bzl", "python_entrypoint")
-load("@python310//:interpreter.bzl", "interpreter_path")
 
 python_library(
     name="lib",
@@ -16,6 +15,5 @@ python_entrypoint(
     deps=[":lib"],
     entrypoint="application",
     interpreter="@python310//:python",
-    interpreter_path=interpreter_path,
     visibility=["//visibility:public"],
 )

@@ -10,9 +10,6 @@ PythonEntrypointInfo = provider(
 def _python_entrypoint_impl(ctx):
     interpreter = ctx.actions.declare_file("%s.runfiles/python" % ctx.attr.name)
     ctx.actions.symlink(output=interpreter, target_file=ctx.attr.interpreter.files.to_list()[0])
-    print(interpreter)
-    print_vars(interpreter, ignore=["tree_relative_path"])
-
     output_files = [
         link_source(ctx, source_file, dep=dep)
         for dep in ctx.attr.deps
@@ -44,7 +41,6 @@ python_entrypoint = rule(
     attrs={
         "deps": attr.label_list(),
         "entrypoint": attr.string(),
-        "interpreter_path": attr.string(),
         "interpreter": attr.label(allow_single_file=True),
     },
     executable=True,
