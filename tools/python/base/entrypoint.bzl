@@ -13,18 +13,19 @@ def _python_entrypoint_impl(ctx):
         for dep in ctx.attr.deps
         for source_file in dep.files.to_list()
     ]
-    # print_vars(ctx, ignore=["aspect_ids", "build_setting_value", "rule"])
-    # print_vars(ctx.label, ignore=["aspect_ids", "build_setting_value", "rule"])
     executable = ctx.actions.declare_file(ctx.attr.name)
     ctx.actions.write(
         output=executable,
-        content="""#!/usr/bin/env bash
+        content="""#!{interpreter_path}
+import os
+import sys
+from pathlib import Path
 
-{interpreter_path} -m {entrypoint}
-
+os.environ["PYTHONPATH"] = str(Path(__file__).parent / "{name}.runfiles")
+os.execv("{interpreter_path}", ["{interpreter_path}", "-m", "{entrypoint}", *sys.argv[1:]])
 """.format(
             entrypoint=ctx.attr.entrypoint,
-            pythonpath=path(ctx.bin_dir.path).get_child(ctx.label.package).get_child("%s.runfiles" % ctx.label.name).value,
+            name=ctx.attr.name,
             interpreter_path=ctx.attr.interpreter_path,
         )
     )
@@ -45,4 +46,5 @@ python_entrypoint = rule(
         "entrypoint": attr.string(),
         "interpreter_path": attr.string(),
     },
+    executable=True,
 )
