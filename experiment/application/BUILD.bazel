@@ -15,6 +15,7 @@ python_entrypoint(
     name="run",
     deps=[":lib"],
     entrypoint="application",
+    interpreter="@python310//:python",
     interpreter_path=interpreter_path,
     visibility=["//visibility:public"],
 )

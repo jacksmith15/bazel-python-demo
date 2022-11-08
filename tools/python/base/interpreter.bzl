@@ -21,6 +21,9 @@ interpreter_path = "{path}"
             path=repository_ctx.attr.path,
         )
     )
+
+    repository_ctx.symlink(repository_ctx.attr.path, "python")
+
     repository_ctx.file("BUILD.bazel", """
 filegroup(
     name="interpreter",
@@ -28,6 +31,7 @@ filegroup(
     visibility=["//visibility:public"],
 )
 
+exports_files(["python"])
 
 """)
 
