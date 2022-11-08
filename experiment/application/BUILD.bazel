@@ -1,0 +1,20 @@
+load("//tools/python/base:library.bzl", "python_library")
+load("//tools/python/base:entrypoint.bzl", "python_entrypoint")
+load("@python310//:interpreter.bzl", "interpreter_path")
+
+python_library(
+    name="lib",
+    srcs=glob(["**/*.py"]),
+    deps=["//experiment/library:lib"],
+    import_path="..",
+    visibility=["//visibility:public"],
+)
+
+
+python_entrypoint(
+    name="run",
+    deps=[":lib"],
+    entrypoint="application",
+    interpreter_path=interpreter_path,
+    visibility=["//visibility:public"],
+)

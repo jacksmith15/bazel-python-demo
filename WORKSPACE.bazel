@@ -117,3 +117,8 @@ pipenv_parse(
 # Create repos for each dependency in python_deps
 load("@python_deps//:requirements.bzl", "install_deps")
 install_deps()
+
+
+load("//tools/python/base:interpreter.bzl", "python_interpreter")
+
+python_interpreter(name="python310", path="/home/jack/.pyenv/versions/3.10.2/bin/python")
