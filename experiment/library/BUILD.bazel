@@ -1,9 +1,9 @@
 load("//tools/python/base:library.bzl", "python_library")
 
-
 python_library(
     name="lib",
     srcs=glob(["**/*.py"]),
     import_path="..",
+    interpreter="@python310//:interpreter",
     visibility=["//visibility:public"],
 )

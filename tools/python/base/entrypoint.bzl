@@ -1,5 +1,6 @@
-load("//tools/python/base:utils.bzl", "path", "print_vars")
+load("//tools/python/base:utils.bzl", "path")
 load("//tools/python/base:library.bzl", "link_source")
+load("//tools/python/base:interpreter.bzl", "PythonInterpreterInfo")
 
 PythonEntrypointInfo = provider(
     doc="""Provider for Python entry points.""",
@@ -14,6 +15,8 @@ def _python_entrypoint_impl(ctx):
         link_source(ctx, source_file, dep=dep)
         for dep in ctx.attr.deps
         for source_file in dep.files.to_list()
+        # Don't copy interpreter from other libraries
+        if (PythonInterpreterInfo not in dep or source_file != dep[PythonInterpreterInfo].interpreter)
     ] + [interpreter]
 
     executable = ctx.actions.declare_file(ctx.attr.name)

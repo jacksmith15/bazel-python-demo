@@ -6,6 +6,7 @@ python_library(
     srcs=glob(["**/*.py"]),
     deps=["//experiment/library:lib"],
     import_path="..",
+    interpreter="@python310//:interpreter",
     visibility=["//visibility:public"],
 )
 
@@ -14,6 +15,6 @@ python_entrypoint(
     name="run",
     deps=[":lib"],
     entrypoint="application",
-    interpreter="@python310//:python",
+    interpreter="@python310//:interpreter",
     visibility=["//visibility:public"],
 )

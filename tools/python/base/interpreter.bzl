@@ -1,45 +1,24 @@
-def _python_interpreter_impl(repository_ctx):
-    result = repository_ctx.execute([repository_ctx.attr.path, "--version"])
-    if not result.return_code == 0:
-        fail("Couldn't detect Python version from '{path}'".format(path=repository_ctx.attr.path))
-    version = result.stdout.strip().rsplit(" ", 1)[-1]
-    major, minor, patch = version.split(".")
-
-    repository_ctx.file("interpreter.bzl", """
-version_str = "{version}"
-version_major = {major}
-version_minor = {minor}
-version_patch = {patch}
-version = ({major}, {minor}, {patch})
-
-interpreter_path = "{path}"
-""".format(
-            version=version,
-            major=major,
-            minor=minor,
-            patch=patch,
-            path=repository_ctx.attr.path,
-        )
-    )
-
-    repository_ctx.symlink(repository_ctx.attr.path, "python")
-
-    repository_ctx.file("BUILD.bazel", """
-filegroup(
-    name="interpreter",
-    srcs=["interpreter.bzl"],
-    visibility=["//visibility:public"],
+PythonInterpreterInfo = provider(
+    fields=["version", "interpreter"],
 )
 
-exports_files(["python"])
+def _interpreter_impl(ctx):
+    interpreter_target = ctx.attr.interpreter
+    interpreter_file = interpreter_target.files.to_list()[0]
+    return [
+        DefaultInfo(files=depset([interpreter_file])),
+        PythonInterpreterInfo(
+            version=(ctx.attr.version_major, ctx.attr.version_minor, ctx.attr.version_patch),
+            interpreter=interpreter_file,
+        ),
+    ]
 
-""")
-
-
-
-python_interpreter = repository_rule(
-    implementation=_python_interpreter_impl,
+interpreter = rule(
+    implementation=_interpreter_impl,
     attrs={
-        "path": attr.string(),
+        "interpreter": attr.label(allow_single_file=True),
+        "version_major": attr.int(),
+        "version_minor": attr.int(),
+        "version_patch": attr.int(),
     }
 )
