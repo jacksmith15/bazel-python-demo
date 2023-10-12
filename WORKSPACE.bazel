@@ -117,3 +117,15 @@ pipenv_parse(
 # Create repos for each dependency in python_deps
 load("@python_deps//:requirements.bzl", "install_deps")
 install_deps()
+
+# Create repos for overriden python dependencies
+
+# //src/users/api uses a different version of uvicorn:
+load("@rules_python//python:pip.bzl", "pip_parse")
+pip_parse(
+    name="users_api_deps",
+    requirements_lock="//src/users/api:requirements-override.txt",
+    python_interpreter_target=interpreter,
+)
+load("@users_api_deps//:requirements.bzl", "install_deps")
+install_deps()
